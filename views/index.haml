@@ -1,0 +1,403 @@
+%html
+  -#
+    This shows lays out several different charts using scripts defined
+    in corresponding js files found in the public/charts directory.
+    The js files are included and utilized by calling init/update
+    methods.  d3 drives the presentation and interaction.  Several
+    event types are defined for selection and loading which are used
+    to synchronize the charts.
+
+    This page defines a global object called $data for chart
+    configuration, and invokes /data requests on the server to get the
+    json required by the individual chart libraries.
+
+    For the charts on this page, two different datasets are loaded via
+    d3 json xhr requests.  One is a set of timeseries data including bucketed
+    counts for displaying histograms for each timeslice.   
+
+    The other is a breakdown of call counts based on an arbitrary hierarchically
+    structured label, generally the request action (URL, controller action, etc),
+    which drives the treemap chart.  This breakdown is also calculated for each 
+    timeslice as well as the overall summary using the structure based on
+    Bostocks treemap example.
+        
+    For more information refer to the readme.md file.
+  
+  %head
+    -# script{type: 'text/javascript', src:"http://d3js.org/d3.v3.js"}
+    %script{type: 'text/javascript', src:"/d3.js"}
+    :javascript
+      $data = {};
+      $data.file = "#{@file}";
+      // General layout parameters to ensure the charts have roughly the same
+      // dimensions
+      $data.width = 600;
+      $data.height = 300;
+      $data.margin = {top: 8, right: 50, bottom: 30, left: 50}
+      $data.yMax = #{@y_max};
+      $data.density = #{@density};
+      $data.apdex_t = #{@apdex_t};
+      // The json files have two different values that can be plotted, front end
+      // and back end.  The index refers to the location of the value in each record.
+      // 3 for end user, 4 for app server.
+      $data.value_index = #{@value_index};
+
+      // newXXXdata events are dispatched when new datasets are loaded
+      // timerangeSelect is used to dispatch a new time range selection within the dataset.  Right now
+      //   it's just a single timeslice index value but should be expanded to select a range of timeslices
+      // bucketSelect is dispatched when a subrange of values (ie, 1000-1100 ms) is selected in this histogram.
+      // plotSelect is dispatched when a new plot (mean, median apdex) is selected.
+      $data.dispatch = d3.dispatch("newTreemapData", "newTimesliceData", "timerangeSelect", "bucketSelect", "plotSelect");
+
+      // The filter is a subset of values based on the label.  The filter can be "only" or "except"
+      $data.filter = "#{@filter_label}";
+      $data.only = "#{@only ? '1' : '0'}";
+
+      // This defines the attributes of the timeslice record that are available for selection.  It could
+      // also include min and max.  The displayedPlots are the currently viewed plots and changes dynamically.
+      $data.allPlots = ["mean", "g_mean", "pct_25", "mode", "median", "pct_75", "pct_95", "pct_99", "apdex", "rpm"];
+      $data.displayedPlots = ["mean"];
+
+      // The timeslice array contains objects with fields that correspond to the plot values for each timeslice
+      // like mean, median, apdex, etc.  There is also a hist field with an array of values for the distribution
+      // of values in that timeslice.  This array drives the histogram as well as the heatmap.
+      $data.timeslices = []
+
+      // The summary timeslice is a timeslice record with values and a histogram for the complete
+      // timerange of the dataset.      
+      $data.summaryTimeslice = {}
+
+      $data.treemapRoot = {}
+      $data.counts = []
+     
+      // The maximum count across all the buckets in each timeslice's histogram, used to normalize
+      // the per-timeslice histogram display.
+      $data.bucketMax = 0
+
+      // -1 means summary data is the initial selection, otherwise this is the
+      // index of data.timeslices
+      $data.selectedTimeslice = -1
+
+      // -1 means entire timerange of data in scope, otherwise it's the bucket index into $data.timeslices[n].hist
+      $data.selectedBucket = -1
+
+      var refreshData = function() {
+        form = d3.select("form")
+        $data.yMax = d3.select("input#y_max").node().value;
+        $data.density = d3.select("input#density").node().value;
+        $data.apdex_t = d3.select("input#apdex_t").node().value;
+        $data.filter = d3.select("select#filter").node().selectedOptions[0].value;
+        var nextFile = d3.select("select#filename").node().selectedOptions[0].value;
+        if (nextFile != $data.file) {
+            $data.file = nextFile;
+            $data.filter = "";
+        }
+        $data.value_index = (d3.select("input#enduser").node().checked ? 3 : 4);
+        $data.only = d3.select("input#only").node().checked ? "1" : "0";
+        loadCharts();     
+        return false;
+      }
+      function loadCharts() {
+        d3.selectAll("img.busy").style("display", "inline");
+        d3.json("/data/aggregate/"+$data.file+"?" + 
+          "value_index=" + $data.value_index + "&" +
+          "apdex_t=" + $data.apdex_t + "&" +
+          "buckets=" + ($data.density * $data.width / $data.height) + "&" +
+          "filter=" + $data.filter + "&" +
+          "density=" + $data.density + "&" +
+          "value_index=" + $data.value_index + "&" +
+          "y_max=" + $data.yMax + "&" +
+          "only=" + $data.only,
+          
+          function(error, data) {
+            // calculate the maximum bucket for all the histograms.  This will help
+            // us keep the y scale the same
+            $data.bucketMax = 0;
+            // The first bucket is the summary for the entire time range
+            $data.summaryTimeslice = data.shift();
+            $data.summaryTimeslice.time = new Date($data.summaryTimeslice.time);
+            data.forEach(function(d) {
+                // translate the timestamp into a date for display on the x axis.
+                d.time = new Date(d.time);
+                $data.bucketMax = d3.max([$data.bucketMax, d.bucket_max]);
+            });
+            $data.timeslices = data;
+            $data.dispatch.newTimesliceData();
+          });
+
+        var numCols = Math.floor($data.density * ($data.width / $data.height));
+        d3.json("/data/treemap/"+$data.file + "?" +
+          "value_index="+$data.value_index + "&" +
+          "only=" + $data.only + "&" +
+          "buckets=" + ($data.density * $data.width / $data.height) + "&" +
+          "filter=" + $data.filter + "&" +
+          "density=" + $data.density + "&" +
+          "y_max=" + $data.yMax + "&" +
+          "cols="+numCols, 
+          function(error, data) {
+            $data.treemapRoot = data.tree;
+            var scopes = data.counts.sort(function(a,b) { return d3.descending(a[1],b[1]); }).map(function(v) { return v[0]; }).slice(0,20);
+            // update the options menu for the scope
+            scopes.unshift("")
+            var options = d3.select("select#filter").selectAll("option").data(scopes);
+            options.enter()
+              .append("option")
+            options
+              .attr("value",String)
+              .attr("selected", function(m) { return (m == $data.filter) ? "true" : null; })
+              .text(function(m) { return m == "" ? "All" : m });
+            options.exit().remove();
+            $data.dispatch.newTreemapData();
+          })
+      }
+
+    :css
+       body {
+         font: 10px sans-serif;
+       }
+
+       .axis path,
+       .axis line {
+         fill: none;
+         stroke: #000;
+         shape-rendering: crispEdges;
+       }
+       .axis text {
+         font: 13px sans-serif;
+        }
+       .series {
+         fill: none;
+         stroke-width: 2.5px;
+       }
+       .clickrect {
+         fill: #F6F6F6;
+         stroke: #999;
+         stroke-width: 2px;
+       }
+       .legend { 
+         font-size: 12px;
+       }
+       rect.legenditem { 
+          fill: #FFD;
+          stroke: black;
+          stroke-width: 1px;
+       }
+       .legenditem line {
+       }
+       #histogram-sect > div.histogram {
+         position: relative;
+       }
+       div.summary_item {
+         display: inline;
+         position: relative;
+         float: left;
+         margin: 6px;
+         padding: 8px;
+         width: 120px;
+       }       
+       .summary_item div {
+         text-align: center;
+       }
+       .summary_item span.value {
+         font-size: 28px;
+         text-align: center;
+       }
+       .summary_item span.units {
+         font-size: 18px;
+         text-align: center;
+       }
+
+       .summary_item div.bg {
+         position: absolute;
+         float: left;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         opacity: 0.2;
+       }
+       div.outliers {
+         position: absolute;
+         background: rgba(220,220,220,0.5);
+         padding: 6px;
+         font-size: 16px;
+         border-width: 2px;
+       }
+      .mean   { stroke: #8E2; background: #8E2 }
+      .std_dev { stroke: #8E2 ; background: #8E2 }
+      .g_mean { stroke: #0a9 ; background: #0a9 }
+      .g_stddev { stroke: #0a9 ; background: #0a9 }
+      .max    { stroke: black ; background: black }
+      .min    { stroke: black ; background: black }
+      .pct_25 { stroke: #F66 ; background: #F66 }
+      .median { stroke: #F00 ; background: #F00 }
+      .mode   { stroke: #060 ; background: #060 }
+      .rpm    { 
+          stroke: #333; 
+          background: #F0F; 
+          stroke-dasharray: 15, 5; 
+          stroke-width: 1px;
+      }
+      .pct_75 { stroke: #C00 ; background: #C00 }
+      .pct_95 { stroke: #900 ; background: #900 }
+      .pct_99 { stroke: #600 ; background: #600 }
+      .apdex  { stroke: #33C ; background: #33C }
+
+      .apdex_s {
+          fill: #FDCC8A;
+          stroke: #FDCC8A;
+       }
+       .apdex_t {
+          fill: #E34A33;
+          stroke: #E34A33;
+       }
+       .apdex_f {
+          fill: #333;
+          stroke: #333;
+       }
+      #treemap-sect .node {
+        border: solid 1px white;
+        font: 10px sans-serif;
+        line-height: 12px;
+        overflow: hidden;
+        position: absolute;
+        text-indent: 2px;
+      }
+      #treemap-sect p.range {
+        font-size: 1.4em;
+      }
+      .chart-row-section {
+        position: relative;
+        clear: both;
+      }
+      #timeseries-sect {
+        left: 0px;
+        float: left;
+      }
+      #histogram-sect {
+        position: absolute;
+        left: 720px;     
+        float: left;
+      }
+
+  %body
+    %script{type: 'text/javascript', src: "charts/timeseries.js"}
+    %script{type: 'text/javascript', src: "charts/histogram.js"}
+    %script{type: 'text/javascript', src: "charts/treemap.js"}
+    %script{type: 'text/javascript', src: "charts/summary_numbers.js"}
+    %p 
+      %form{method: 'get', onsubmit: 'return refreshData();'}
+        %select{id: 'filename', name: 'filename', size: 1, onchange: 'refreshData();'}
+          - @files.each do |filename|
+            %option{value: filename, selected: @file == filename}
+              = filename
+        &nbsp; &nbsp;
+        <input id="enduser" type='radio' name="value_index" value="3" #{@value_index == 3 ? 'checked' : ''}>end user</input>
+        <input type='radio' name="value_index" value="4" #{@value_index == 4 ? 'checked' : ''}>app server</input>
+        &nbsp; &nbsp;
+        y max:
+        %input{id: 'y_max', type: 'text', size: 6, name: 'y_max', value: @y_max }
+        &nbsp; &nbsp;
+        scatter plot density:
+        %input{id: 'density', type: 'text', size: 6, name: 'density', value: @density }
+        &nbsp; &nbsp;
+        apdex T: 
+        %input{id: 'apdex_t', type: 'text', size: 6, name: 'apdex_t', value: @apdex_t }
+        %input{type: 'submit'}
+        %br
+        %select{id: 'filter', name: 'filter', size: 1, onchange: 'refreshData();'}
+          %option{value: '', selected: @filter_label.nil?}          
+            All
+          - @top10.each do |transaction|
+            %option{value: transaction, selected: transaction == @filter_label}
+              = transaction
+        &nbsp; &nbsp;
+        <input id='only' type='radio' name="only" value="1" #{@only ? 'checked' : ''}>only</input>
+        <input type='radio' name="only" value="0" #{!@only ? 'checked' : ''}>except</input>
+    - if @url
+      %p 
+        %a{href: @url, target: "_new"}
+          View this data in RPM
+
+    %h1
+      %span#range
+        All Data
+      %button#reset{style: 'display: done', onClick: 'resetSelection();'}
+        RESET
+    #summary-values.chart-row-section
+    #top-graph.chart-row-section
+      #timeseries-sect
+        %h1 
+          Timeseries Plots
+          %img.timeseries.busy{src:'images/busy.gif', style: 'display:none'}
+        %p 
+          Click on any item in the legend to toggle its display
+        .timeseries
+      #histogram-sect
+        %h1 
+          Response Time Distribution
+          %img.histogram.busy{src:'images/busy.gif', style: 'display:none'}
+        %p
+          Show a histogram with summary bars at the different statistical aggregates: mean, median, 95 percentile, etc
+        .histogram
+    
+      #treemap-sect.chart-row-section
+        %h1 
+          Transaction Breakdown
+          %img.treemap.busy{src:'images/busy.gif', style: 'display:none'}
+        -#%form
+          Breakdown by: 
+          %label
+            %input#size{:checked => "", :name => "mode", :type => "radio", :value => "size"}/
+            Total time
+          %label
+            %input#count{:name => "mode", :type => "radio", :value => "count"}/
+            Call count
+      %p
+        Click Scatterplot or Histogram to map activity for a single column.
+        %a{href: '/data/treemap/nr-queuing-spike.json', target: "_new"}
+          See sample json.
+
+    :javascript
+
+      function showSelection() {
+         var xScale = d3.time.scale()
+             .rangeRound([0, $data.timeslices.length])
+             .domain([$data.timeslices[0].time, $data.timeslices[$data.timeslices.length-1].time])
+         var yScale = d3.scale.linear()
+             .rangeRound([0, $data.yMax])
+             .domain([0, $data.summaryTimeslice.hist.length]);
+
+         var format = d3.time.format("%H:%M:%S")
+         var info = [];
+         if ($data.selectedBucket != -1) {
+             info.push(yScale($data.selectedBucket)+ " ms to "+ yScale($data.selectedBucket+1)+" ms");
+         }
+         if ($data.selectedTimeslice != -1) {
+             info.push(format(xScale.invert($data.selectedTimeslice))+ " to "+ format(xScale.invert($data.selectedTimeslice+1)));
+         }
+         var desc = d3.select("#range");
+         var resetLink = d3.select("#reset");
+         if (info.length == 0) {
+             desc.text("All Data");
+             resetLink.style("display", "none");
+         } else {
+             desc.text("Range: "+info.join(", "));
+             resetLink.style("display","inline");
+         }
+      }
+      function resetSelection() {
+        $data.selectedBucket = -1;
+        $data.selectedTimeslice = -1;
+        showSelection();
+        $data.dispatch.newTimesliceData();
+        $data.dispatch.newTreemapData();
+      }
+      $data.dispatch.on("timerangeSelect.index", showSelection);
+      $data.dispatch.on("bucketSelect.index", showSelection);
+
+      timeseriesInit(d3.select("#timeseries-sect > div.timeseries"));
+      histogramInit(d3.select("#histogram-sect > div.histogram"));
+      treemapInit(d3.select("div#treemap-sect"));
+      summaryInit(d3.select("div#summary-values"));
+      loadCharts();
