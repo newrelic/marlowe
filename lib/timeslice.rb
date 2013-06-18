@@ -121,14 +121,14 @@ class Timeslice
   def hist
     return [] unless @histogram_buckets
     max = @histogram_buckets.max.to_f
-    @histogram_buckets[0..-2].map { | count | { count: count, score: count / max } }
+    @histogram_buckets[0..-2].map { | count | { count: count, score: max > 0 ? count / max : 0 } }
   end
 
   def outliers
     return [] unless @histogram_buckets
     max = @histogram_buckets.max.to_f
     outlier_count = @histogram_buckets[-1]
-    return { count: outlier_count, score: outlier_count / max }
+    return { count: outlier_count, score: max > 0 ? outlier_count / max : 0 }
   end
 
   def mean
