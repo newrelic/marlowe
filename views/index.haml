@@ -92,6 +92,9 @@
         if (switchedFile) {
             $data.file = nextFile;
             $data.filter = "";
+            $data.selectedBucket = -1;
+            $data.selectedTimeslice = -1;
+            showSelection();
         }
         $data.value_index = (d3.select("input#enduser").node().checked ? 3 : 4);
         $data.only = d3.select("input#only").node().checked ? "1" : "0";
