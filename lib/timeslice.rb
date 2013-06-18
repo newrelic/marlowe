@@ -69,7 +69,10 @@ class Timeslice
       mode: mode.to_i,
       mean: mean.to_i,
       g_mean: geometric_mean.to_i,
-      g_stddev: geometric_standard_deviation.to_i,
+      g_stddev: geometric_standard_deviation.round(2),
+      interval_g1: geometric_interval(1),
+      interval_g2: geometric_interval(2),
+      interval_g3: geometric_interval(3),
       pct_25: pct_25,
       pct_75: pct_75,
       pct_95: pct_95,
@@ -143,8 +146,12 @@ class Timeslice
     count = @values.size
     return 0 if count == 0 
     v1 = @sum_of_log_squares.to_f/count 
-    v2 = @sum_of_logs.to_f/count
+    v2 = (@sum_of_logs.to_f/count)**2
     Math.exp(Math.sqrt(v1 - v2))
+  end
+
+  def geometric_interval(num) 
+    return (geometric_mean * (geometric_standard_deviation**num)).round
   end
 
   def standard_deviation

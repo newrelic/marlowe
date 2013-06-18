@@ -88,16 +88,17 @@
         $data.apdex_t = d3.select("input#apdex_t").node().value;
         $data.filter = d3.select("select#filter").node().selectedOptions[0].value;
         var nextFile = d3.select("select#filename").node().selectedOptions[0].value;
-        if (nextFile != $data.file) {
+        var switchedFile = nextFile != $data.file
+        if (switchedFile) {
             $data.file = nextFile;
             $data.filter = "";
         }
         $data.value_index = (d3.select("input#enduser").node().checked ? 3 : 4);
         $data.only = d3.select("input#only").node().checked ? "1" : "0";
-        loadCharts();     
+        loadCharts(switchedFile);     
         return false;
       }
-      function loadCharts() {
+      function loadCharts(switchedFile) {
         d3.selectAll("img.busy").style("display", "inline");
         d3.json("/data/aggregate/"+$data.file+"?" + 
           "value_index=" + $data.value_index + "&" +
@@ -136,19 +137,25 @@
           "cols="+numCols, 
           function(error, data) {
             $data.treemapRoot = data.tree;
-            var scopes = data.counts.sort(function(a,b) { return d3.descending(a[1],b[1]); }).map(function(v) { return v[0]; }).slice(0,20);
-            // update the options menu for the scope
-            scopes.unshift("")
-            var options = d3.select("select#filter").selectAll("option").data(scopes);
-            options.enter()
-              .append("option")
-            options
-              .attr("value",String)
-              .attr("selected", function(m) { return (m == $data.filter) ? "true" : null; })
-              .text(function(m) { return m == "" ? "All" : m });
-            options.exit().remove();
+            if (switchedFile) {
+              var scopes = data.counts.sort(function(a,b) { return d3.descending(a[1],b[1]); }).map(function(v) { return v[0]; }).slice(0,20);
+              // update the options menu for the scope
+              scopes.unshift("")
+              var options = d3.select("select#filter").selectAll("option").data(scopes);
+              options.enter()
+                .append("option")
+              options
+                .attr("value",String)
+                .attr("selected", function(m) { return (m == $data.filter) ? "true" : null; })
+                .text(function(m) { return m == "" ? "All" : m });
+              options.exit().remove();
+            }
             $data.dispatch.newTreemapData();
-          })
+          });
+          d3.select("input#enduser").attr("checked", $data.value_index == 3 ? 'true' : null);
+          d3.select("input#appserver").attr("checked", $data.value_index == 4 ? 'true' : null);
+          d3.select("input#only").attr("checked", $data.only == "1" ? 'true' : null);
+          d3.select("input#except").attr("checked", $data.only == "0" ? 'true' : null);
       }
 
     :css
@@ -292,8 +299,10 @@
             %option{value: filename, selected: @file == filename}
               = filename
         &nbsp; &nbsp;
-        <input id="enduser" type='radio' name="value_index" value="3" #{@value_index == 3 ? 'checked' : ''}>end user</input>
-        <input type='radio' name="value_index" value="4" #{@value_index == 4 ? 'checked' : ''}>app server</input>
+        %input#enduser{type: 'radio', name: 'value_index', value: 3, onchange: 'refreshData();'}
+          end user
+        %input#appserver{type: 'radio', name: 'value_index', value: 4, onchange: 'refreshData();'}
+          app server
         &nbsp; &nbsp;
         y max:
         %input{id: 'y_max', type: 'text', size: 6, name: 'y_max', value: @y_max }
@@ -312,8 +321,10 @@
             %option{value: transaction, selected: transaction == @filter_label}
               = transaction
         &nbsp; &nbsp;
-        <input id='only' type='radio' name="only" value="1" #{@only ? 'checked' : ''}>only</input>
-        <input type='radio' name="only" value="0" #{!@only ? 'checked' : ''}>except</input>
+        %input#only{type: 'radio', name: 'only', value: "1", onchange: 'refreshData();'}
+          only
+        %input#except{type: 'radio', name: 'only', value: "0", onchange: 'refreshData();'}
+          except
     - if @url
       %p 
         %a{href: @url, target: "_new"}
@@ -400,4 +411,4 @@
       histogramInit(d3.select("#histogram-sect > div.histogram"));
       treemapInit(d3.select("div#treemap-sect"));
       summaryInit(d3.select("div#summary-values"));
-      loadCharts();
+      loadCharts(true);
