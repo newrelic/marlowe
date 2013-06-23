@@ -173,7 +173,6 @@
        body {
          font: 10px sans-serif;
        }
-
        .axis path,
        .axis line {
          fill: none;
@@ -308,10 +307,10 @@
       }
 
   %body
-    %script{type: 'text/javascript', src: "charts/timeseries.js"}
-    %script{type: 'text/javascript', src: "charts/histogram.js"}
-    %script{type: 'text/javascript', src: "charts/treemap.js"}
-    %script{type: 'text/javascript', src: "charts/summary_numbers.js"}
+    %script{type: 'text/javascript', src: "/charts/timeseries.js"}
+    %script{type: 'text/javascript', src: "/charts/histogram.js"}
+    %script{type: 'text/javascript', src: "/charts/treemap.js"}
+    %script{type: 'text/javascript', src: "/charts/summary_numbers.js"}
     %p 
       %form{method: 'get', onsubmit: 'return refreshData();'}
         %select{id: 'filename', name: 'filename', size: 1, onchange: 'refreshData();'}
@@ -353,9 +352,10 @@
     %h1
       %span#range
         All Data
-      %button#reset{style: 'display: done', onClick: 'resetSelection();'}
+      %button#reset{style: 'display: none', onClick: 'resetSelection();'}
         RESET
     #summary-values.chart-row-section
+
     #top-graph.chart-row-section
       #timeseries-sect
         %h1 
