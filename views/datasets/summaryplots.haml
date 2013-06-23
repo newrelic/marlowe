@@ -1,28 +1,4 @@
 %html
-  -#
-    This shows lays out several different charts using scripts defined
-    in corresponding js files found in the public/charts directory.
-    The js files are included and utilized by calling init/update
-    methods.  d3 drives the presentation and interaction.  Several
-    event types are defined for selection and loading which are used
-    to synchronize the charts.
-
-    This page defines a global object called $data for chart
-    configuration, and invokes /data requests on the server to get the
-    json required by the individual chart libraries.
-
-    For the charts on this page, two different datasets are loaded via
-    d3 json xhr requests.  One is a set of timeseries data including bucketed
-    counts for displaying histograms for each timeslice.   
-
-    The other is a breakdown of call counts based on an arbitrary hierarchically
-    structured label, generally the request action (URL, controller action, etc),
-    which drives the treemap chart.  This breakdown is also calculated for each 
-    timeslice as well as the overall summary using the structure based on
-    Bostocks treemap example.
-        
-    For more information refer to the readme.md file.
-  
   %head
     -# script{type: 'text/javascript', src:"http://d3js.org/d3.v3.js"}
     %script{type: 'text/javascript', src:"/d3.js"}
@@ -85,32 +61,6 @@
             $data.dispatch.newTimesliceData();
           });
 
-        var numCols = Math.floor($data.density * ($data.width / $data.height));
-        d3.json("/data/treemap/"+$data.file + "?" +
-          "value_index="+$data.value_index + "&" +
-          "only=" + $data.only + "&" +
-          "buckets=" + ($data.density * $data.width / $data.height) + "&" +
-          "filter=" + $data.filter + "&" +
-          "density=" + $data.density + "&" +
-          "y_max=" + $data.yMax + "&" +
-          "cols="+numCols, 
-          function(error, data) {
-            $data.treemapRoot = data.tree;
-            if (switchedFile) {
-              var scopes = data.counts.sort(function(a,b) { return d3.descending(a[1],b[1]); }).map(function(v) { return v[0]; }).slice(0,20);
-              // update the options menu for the scope
-              scopes.unshift("")
-              var options = d3.select("select#filter").selectAll("option").data(scopes);
-              options.enter()
-                .append("option")
-              options
-                .attr("value",String)
-                .attr("selected", function(m) { return (m == $data.filter) ? "true" : null; })
-                .text(function(m) { return m == "" ? "All" : m });
-              options.exit().remove();
-            }
-            $data.dispatch.newTreemapData();
-        });
         d3.select("input#enduser").attr("checked", $data.value_index == 3 ? 'true' : null);
         d3.select("input#appserver").attr("checked", $data.value_index == 4 ? 'true' : null);
         d3.select("input#only").attr("checked", $data.only == "1" ? 'true' : null);
@@ -222,7 +172,7 @@
   %body
     %script{type: 'text/javascript', src: "/charts/timeseries.js"}
     %script{type: 'text/javascript', src: "/charts/histogram.js"}
-    %script{type: 'text/javascript', src: "/charts/treemap.js"}
+    %script{type: 'text/javascript', src: "/charts/summary_numbers.js"}
     %p 
       %form{method: 'get', onsubmit: 'return refreshData();'}
         %select{id: 'filename', name: 'filename', size: 1, onchange: 'refreshData();'}
@@ -282,26 +232,12 @@
           Show a histogram with summary bars at the different statistical aggregates: mean, median, 95 percentile, etc
         .histogram
     
-      #treemap-sect.chart-row-section
-        %h1 
-          Transaction Breakdown
-          %img.treemap.busy{src:'images/busy.gif', style: 'display:none'}
-        -#%form
-          Breakdown by: 
-          %label
-            %input#size{:checked => "", :name => "mode", :type => "radio", :value => "size"}/
-            Total time
-          %label
-            %input#count{:name => "mode", :type => "radio", :value => "count"}/
-            Call count
-      %p
-        Click Scatterplot or Histogram to map activity for a single column.
-        %a{href: '/data/treemap/nr-queuing-spike.json', target: "_new"}
-          See sample json.
+    #summary-values.chart-row-section
+
 
     :javascript
 
       timeseriesInit(d3.select("#timeseries-sect > div.timeseries"));
       histogramInit(d3.select("#histogram-sect > div.histogram"));
-      treemapInit(d3.select("div#treemap-sect"));
+      summaryInit(d3.select("div#summary-values"));
       loadCharts(true);

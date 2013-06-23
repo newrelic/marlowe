@@ -1,0 +1,92 @@
+.mean {
+	stroke: #8E2;
+	background: #8E2
+}
+.a_p85 {
+	stroke: #8E2 ;
+	background: #8E2;
+	stroke-dasharray: 20, 5;
+}
+.a_p95 {
+	stroke: #8E2 ;
+	background: #8E2;
+	stroke-dasharray: 10, 5;
+}
+.a_p99 {
+	stroke: #8E2 ;
+	background: #8E2;
+	stroke-dasharray: 5, 5;
+}
+.g_mean {
+	stroke: #0a9 ;
+	background: #0a9
+}
+.g_p85 {
+	stroke: #0a9 ;
+	background: #0a9;
+	stroke-dasharray: 20, 5;
+}
+.g_p95 {
+	stroke: #0a9 ;
+	background: #0a9;
+	stroke-dasharray: 10, 5;
+}
+.g_p99 {
+	stroke: #0a9 ;
+	background: #0a9;
+	stroke-dasharray: 5, 5;
+}
+.max {
+	stroke: black ;
+	background: black
+}
+.min {
+	stroke: black ;
+	background: black
+}
+.pct_85 {
+	stroke: #F66 ;
+	background: #F66;
+	stroke-dasharray: 20, 5;
+}
+.pct_95 {
+	stroke: #900 ;
+	background: #900;
+	stroke-dasharray: 10, 5;
+}
+.pct_99 {
+	stroke: #600 ;
+	background: #600;
+	stroke-dasharray: 5, 5;
+}
+.median {
+	stroke: #F00 ;
+	background: #F00
+}
+.mode {
+	stroke: #060 ;
+	background: #060
+}
+.rpm {
+	stroke: #333;
+	background: #F0F;
+	stroke-dasharray: 15, 5;
+	stroke-width: 1px;
+}
+.apdex {
+	stroke: #33C ;
+	background: #33C
+}
+
+.apdex_s {
+	fill: #FDCC8A;
+	stroke: #FDCC8A;
+}
+.apdex_t {
+	fill: #E34A33;
+	stroke: #E34A33;
+}
+.apdex_f {
+	fill: #333;
+	stroke: #333;
+}
