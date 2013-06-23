@@ -154,11 +154,19 @@
               options.exit().remove();
             }
             $data.dispatch.newTreemapData();
-          });
-          d3.select("input#enduser").attr("checked", $data.value_index == 3 ? 'true' : null);
-          d3.select("input#appserver").attr("checked", $data.value_index == 4 ? 'true' : null);
-          d3.select("input#only").attr("checked", $data.only == "1" ? 'true' : null);
-          d3.select("input#except").attr("checked", $data.only == "0" ? 'true' : null);
+        });
+        d3.select("input#enduser").attr("checked", $data.value_index == 3 ? 'true' : null);
+        d3.select("input#appserver").attr("checked", $data.value_index == 4 ? 'true' : null);
+        d3.select("input#only").attr("checked", $data.only == "1" ? 'true' : null);
+        d3.select("input#except").attr("checked", $data.only == "0" ? 'true' : null);
+      }
+      function togglePlotline(name) {
+        var pos = $data.displayedPlots.indexOf(name);
+        if (pos == -1)
+            $data.displayedPlots.push(name)
+        else
+            $data.displayedPlots.splice(pos, 1);
+        $data.dispatch.plotSelect(name);
       }
 
     :css

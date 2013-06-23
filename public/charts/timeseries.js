@@ -42,15 +42,6 @@ function timeseriesInit(div) {
         d3.select("img.timeseries.busy").style("display", "none");
     }
 
-    function togglePlotline(name) {
-        var pos = $data.displayedPlots.indexOf(name);
-        if (pos == -1)
-            $data.displayedPlots.push(name)
-        else
-            $data.displayedPlots.splice(pos, 1);
-        $data.dispatch.plotSelect(name);
-    }
-
     chart.append("g")
         .attr("class", "heatmap")
         .append("rect")
