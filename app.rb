@@ -15,6 +15,10 @@ before '/data/:type/:file' do |type, file|
 end  
 
 get '/' do
+  haml :index
+end
+
+get '/datasets/:view.html' do
   process_params
   read_data
   @files = Dir["data/*.json"].map{|name| name[%r{/(.*)$}, 1]}
@@ -33,7 +37,7 @@ get '/' do
     end
   end
   @top10 = pages.to_a.sort_by{|name, val| -val}[0..9].map(&:first)
-  haml :index
+  haml :"datasets/#{params[:view]}"
 end
 
 # DATA HANDLERS
