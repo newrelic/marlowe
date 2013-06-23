@@ -70,14 +70,17 @@ class Timeslice
       mean: mean.to_i,
       g_mean: geometric_mean.to_i,
       g_stddev: geometric_standard_deviation.round(2),
-      interval_g1: geometric_interval(1),
-      interval_g2: geometric_interval(2),
-      interval_g3: geometric_interval(3),
-      pct_25: pct_25,
-      pct_75: pct_75,
-      pct_95: pct_95,
-      pct_99: pct_99,
-      median: median.to_i,
+      # upper tail probabilities
+      g_p85: geometric_interval(1.036), # p(0.15)
+      g_p95: geometric_interval(1.645), # p(0.05)
+      g_p99: geometric_interval(2.326), # p(0.01)
+      a_p85: arithmetic_interval(1.036), # p(0.15)
+      a_p95: arithmetic_interval(1.645), # p(0.05)
+      a_p99: arithmetic_interval(2.326), # p(0.01)
+      pct_85: percentile(0.85),  
+      pct_95: percentile(0.95),  
+      pct_99: percentile(0.99),  
+      median: percentile(0.5),
       std_dev: standard_deviation.to_i,
       apdex_t: @apdex_t,
       apdex_f: @apdex_f,
@@ -154,27 +157,17 @@ class Timeslice
     return (geometric_mean * (geometric_standard_deviation**num)).round
   end
 
+  def arithmetic_interval(num) 
+    return (mean + (num * standard_deviation)).round
+  end
+
   def standard_deviation
     count = @values.size
     return 0 if count == 0 || mean == 0
     x = @sum_of_squares - (count * (mean**2))
     Math.sqrt(x / count)
   end
-  def pct_95
-    percentile(0.95)
-  end
-  def pct_99
-    percentile(0.99)
-  end
-  def pct_75
-    percentile(0.75)
-  end
-  def pct_25
-    percentile(0.25)
-  end
-  def median
-    percentile(0.5)
-  end
+
   def percentile(ratio)
     @vec ||= @values.to_a.sort
     count = @vec.size

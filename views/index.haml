@@ -55,7 +55,7 @@
 
       // This defines the attributes of the timeslice record that are available for selection.  It could
       // also include min and max.  The displayedPlots are the currently viewed plots and changes dynamically.
-      $data.allPlots = ["mean", "g_mean", "pct_25", "mode", "median", "pct_75", "pct_95", "pct_99", "apdex", "rpm"];
+      $data.allPlots = ["mean", "g_mean", "mode", "median", "pct_68", "pct_95", "pct_99", "apdex", "rpm"];
       $data.displayedPlots = ["mean"];
 
       // The timeslice array contains objects with fields that correspond to the plot values for each timeslice
@@ -234,12 +234,18 @@
          border-width: 2px;
        }
       .mean   { stroke: #8E2; background: #8E2 }
-      .std_dev { stroke: #8E2 ; background: #8E2 }
+      .a_p85 { stroke: #8E2 ; background: #8E2; stroke-dasharray: 20, 5; }
+      .a_p95 { stroke: #8E2 ; background: #8E2; stroke-dasharray: 10, 5; }
+      .a_p99 { stroke: #8E2 ; background: #8E2; stroke-dasharray: 5, 5; }
       .g_mean { stroke: #0a9 ; background: #0a9 }
-      .g_stddev { stroke: #0a9 ; background: #0a9 }
+      .g_p85 { stroke: #0a9 ; background: #0a9; stroke-dasharray: 20, 5; }
+      .g_p95 { stroke: #0a9 ; background: #0a9; stroke-dasharray: 10, 5; }
+      .g_p99 { stroke: #0a9 ; background: #0a9; stroke-dasharray: 5, 5; }
       .max    { stroke: black ; background: black }
       .min    { stroke: black ; background: black }
-      .pct_25 { stroke: #F66 ; background: #F66 }
+      .pct_85 { stroke: #F66 ; background: #F66; stroke-dasharray: 20, 5; }
+      .pct_95 { stroke: #900 ; background: #900; stroke-dasharray: 10, 5; }
+      .pct_99 { stroke: #600 ; background: #600; stroke-dasharray: 5, 5; }
       .median { stroke: #F00 ; background: #F00 }
       .mode   { stroke: #060 ; background: #060 }
       .rpm    { 
@@ -248,9 +254,6 @@
           stroke-dasharray: 15, 5; 
           stroke-width: 1px;
       }
-      .pct_75 { stroke: #C00 ; background: #C00 }
-      .pct_95 { stroke: #900 ; background: #900 }
-      .pct_99 { stroke: #600 ; background: #600 }
       .apdex  { stroke: #33C ; background: #33C }
 
       .apdex_s {
