@@ -197,7 +197,13 @@
        #histogram-sect > div.histogram {
          position: relative;
        }
-       div.summary_item {
+       div.summary-row {
+         display: table-row;
+         position: relative;
+         float: none;
+       }
+       div.summary-item {
+         border: solid 2px #666;
          display: inline;
          position: relative;
          float: left;
@@ -205,19 +211,19 @@
          padding: 8px;
          width: 120px;
        }       
-       .summary_item div {
+       .summary-item div {
          text-align: center;
        }
-       .summary_item span.value {
+       .summary-item span.value {
          font-size: 28px;
          text-align: center;
        }
-       .summary_item span.units {
+       .summary-item span.units {
          font-size: 18px;
          text-align: center;
        }
 
-       .summary_item div.bg {
+       .summary-item div.bg {
          position: absolute;
          float: left;
          top: 0;
