@@ -1,10 +1,9 @@
-%html
-  %head
-    -# script{type: 'text/javascript', src:"http://d3js.org/d3.v3.js"}
-    %script{type: 'text/javascript', src:"/d3.js"}
-    %script{type: 'text/javascript', src: "/data.js"}
-    %link{type: 'text/css', rel: 'stylesheet', href: '/css/plots.css'}
-    :javascript
+!!!
+- content_for(:head) do
+  %script{type: 'text/javascript', src: "/charts/timeseries.js"}
+  %script{type: 'text/javascript', src: "/charts/histogram.js"}
+  %script{type: 'text/javascript', src: "/charts/summary_numbers.js"}
+  :javascript
       $data.file = "#{@file}";
       $data.yMax = #{@y_max};
       $data.density = #{@density};
@@ -67,7 +66,7 @@
         d3.select("input#except").attr("checked", $data.only == "0" ? 'true' : null);
       }
 
-    :css
+  :css
        body {
          font: 10px sans-serif;
        }
@@ -102,6 +101,9 @@
        #histogram-sect > div.histogram {
          position: relative;
        }
+       #summary-values {
+         
+       }
        div.summary-row {
          display: table-row;
          position: relative;
@@ -114,13 +116,14 @@
          float: left;
          margin: 6px;
          padding: 8px;
-         width: 120px;
+         width: 160px;
        }       
        .summary-item div {
          text-align: center;
+         font-size: 14px;
        }
        .summary-item span.value {
-         font-size: 28px;
+         font-size: 24px;
          text-align: center;
        }
        .summary-item span.units {
@@ -144,17 +147,6 @@
          font-size: 16px;
          border-width: 2px;
        }
-      #treemap-sect .node {
-        border: solid 1px white;
-        font: 10px sans-serif;
-        line-height: 12px;
-        overflow: hidden;
-        position: absolute;
-        text-indent: 2px;
-      }
-      #treemap-sect p.range {
-        font-size: 1.4em;
-      }
       .chart-row-section {
         position: relative;
         clear: both;
@@ -169,75 +161,31 @@
         float: left;
       }
 
-  %body
-    %script{type: 'text/javascript', src: "/charts/timeseries.js"}
-    %script{type: 'text/javascript', src: "/charts/histogram.js"}
-    %script{type: 'text/javascript', src: "/charts/summary_numbers.js"}
+#top-graph.chart-row-section
+  #timeseries-sect
+    %h1 
+      Timeseries Plots
+      %img.timeseries.busy{src:'/images/busy.gif', style: 'display:none'}
     %p 
-      %form{method: 'get', onsubmit: 'return refreshData();'}
-        %select{id: 'filename', name: 'filename', size: 1, onchange: 'refreshData();'}
-          - @files.each do |filename|
-            %option{value: filename, selected: @file == filename}
-              = filename
-        &nbsp; &nbsp;
-        %input#enduser{type: 'radio', name: 'value_index', value: 3, onchange: 'refreshData();'}
-          end user
-        %input#appserver{type: 'radio', name: 'value_index', value: 4, onchange: 'refreshData();'}
-          app server
-        &nbsp; &nbsp;
-        y max:
-        %input{id: 'y_max', type: 'text', size: 6, name: 'y_max', value: @y_max }
-        &nbsp; &nbsp;
-        scatter plot density:
-        %input{id: 'density', type: 'text', size: 6, name: 'density', value: @density }
-        &nbsp; &nbsp;
-        apdex T: 
-        %input{id: 'apdex_t', type: 'text', size: 6, name: 'apdex_t', value: @apdex_t }
-        %input{type: 'submit'}
-        %br
-        %select{id: 'filter', name: 'filter', size: 1, onchange: 'refreshData();'}
-          %option{value: '', selected: @filter_label.nil?}          
-            All
-          - @top10.each do |transaction|
-            %option{value: transaction, selected: transaction == @filter_label}
-              = transaction
-        &nbsp; &nbsp;
-        %input#only{type: 'radio', name: 'only', value: "1", onchange: 'refreshData();'}
-          only
-        %input#except{type: 'radio', name: 'only', value: "0", onchange: 'refreshData();'}
-          except
-    - if @url
-      %p 
-        %a{href: @url, target: "_new"}
-          View this data in RPM
+      Click on any item in the legend to toggle its display
+    .timeseries
+  #histogram-sect
+    %h1 
+      Response Time Distribution
+      %img.histogram.busy{src:'/images/busy.gif', style: 'display:none'}
+    %p
+      Show a histogram with summary bars at the different statistical aggregates: mean, median, 95 percentile, etc
+    .histogram
 
-    %h1
-      %span#range
-        All Data
-      %button#reset{style: 'display: none', onClick: 'resetSelection();'}
-        RESET
-    #top-graph.chart-row-section
-      #timeseries-sect
-        %h1 
-          Timeseries Plots
-          %img.timeseries.busy{src:'/images/busy.gif', style: 'display:none'}
-        %p 
-          Click on any item in the legend to toggle its display
-        .timeseries
-      #histogram-sect
-        %h1 
-          Response Time Distribution
-          %img.histogram.busy{src:'/images/busy.gif', style: 'display:none'}
-        %p
-          Show a histogram with summary bars at the different statistical aggregates: mean, median, 95 percentile, etc
-        .histogram
-    
-    #summary-values.chart-row-section
+#summary-values-sect.chart-row-section
+  %h1
+    %span#range
+      All Data
+    %button#reset{style: 'display: none', onClick: 'resetSelection();'}
+      RESET
 
-
-    :javascript
-
-      timeseriesInit(d3.select("#timeseries-sect > div.timeseries"));
-      histogramInit(d3.select("#histogram-sect > div.histogram"));
-      summaryInit(d3.select("div#summary-values"));
-      loadCharts(true);
+:javascript
+  timeseriesInit(d3.select("#timeseries-sect > div.timeseries"));
+  histogramInit(d3.select("#histogram-sect > div.histogram"));
+  summaryInit(d3.select("div#summary-values-sect"));
+  loadCharts(true);

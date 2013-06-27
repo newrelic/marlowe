@@ -2,6 +2,7 @@ $LOAD_PATH.unshift File.expand_path "../lib", __FILE__
 require 'sinatra'
 require 'json'
 require 'timeslice'
+require "sinatra/content_for"
 
 # This is a Sinatra app for handing data to the d3 visualizations.  It defines
 # page actions for the different datasets needed by the d3 charts.
@@ -15,7 +16,7 @@ before '/data/:type/:file' do |type, file|
 end  
 
 get '/' do
-  haml :index
+  haml :index, layout: false
 end
 
 get '/datasets/:view.html' do

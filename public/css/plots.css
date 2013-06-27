@@ -5,17 +5,17 @@
 .a_p85 {
 	stroke: #8E2 ;
 	background: #8E2;
-	stroke-dasharray: 20, 5;
+	stroke-dasharray: 20, 3;
 }
 .a_p95 {
 	stroke: #8E2 ;
 	background: #8E2;
-	stroke-dasharray: 10, 5;
+	stroke-dasharray: 10, 3;
 }
 .a_p99 {
 	stroke: #8E2 ;
 	background: #8E2;
-	stroke-dasharray: 5, 5;
+	stroke-dasharray: 5, 3;
 }
 .g_mean {
 	stroke: #0a9 ;
@@ -24,17 +24,17 @@
 .g_p85 {
 	stroke: #0a9 ;
 	background: #0a9;
-	stroke-dasharray: 20, 5;
+	stroke-dasharray: 20, 3;
 }
 .g_p95 {
 	stroke: #0a9 ;
 	background: #0a9;
-	stroke-dasharray: 10, 5;
+	stroke-dasharray: 10, 3;
 }
 .g_p99 {
 	stroke: #0a9 ;
 	background: #0a9;
-	stroke-dasharray: 5, 5;
+	stroke-dasharray: 5, 3;
 }
 .max {
 	stroke: black ;

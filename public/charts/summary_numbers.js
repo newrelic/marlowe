@@ -69,7 +69,7 @@ function summaryInit(div) {
 	.attr("class", function(v){ return v[1]+ " series" })
         .style("opacity", function(v) {
 	      return $data.displayedPlots.indexOf(v[1]) >= 0 ? "1" : "0" })
-	.attr("x2", 120)
+	.attr("x2", 300)
         .attr("y1", 6)
         .attr("y2", 6);
 
