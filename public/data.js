@@ -18,12 +18,12 @@ $data.apdex_t = 500;
 // 3 for end user, 4 for app server.
 $data.value_index = 3;
 
-// newXXXdata events are dispatched when new datasets are loaded
-// timerangeSelect is used to dispatch a new time range selection within the dataset.  Right now
-//   it's just a single timeslice index value but should be expanded to select a range of timeslices
-// bucketSelect is dispatched when a subrange of values (ie, 1000-1100 ms) is selected in this histogram.
-// plotSelect is dispatched when a new plot (mean, median apdex) is selected.
-$data.dispatch = d3.dispatch("newTreemapData", "newTimesliceData", "timerangeSelect", "bucketSelect", "plotSelect");
+$data.dispatch = d3.dispatch("newTreemapData",    // new treemap data loaded
+			     "newTimesliceData",  // new timeslice data loaded 
+			     "timerangeSelect",   // new timerange selection
+			     "reloadData",        // settings changed, go get new data
+			     "bucketSelect",      // new value range selected
+			     "plotSelect");       // selected or deselected a plot line
 
 // The filter is a subset of values based on the label.  The filter can be "only" or "except"
 $data.filter = ""
@@ -104,5 +104,62 @@ function resetSelection() {
     $data.dispatch.newTimesliceData();
     $data.dispatch.newTreemapData();
 }
+
+function refreshData() {
+    form = d3.select("form")
+    $data.yMax = d3.select("input#y_max").node().value;
+    $data.density = d3.select("input#density").node().value;
+    $data.apdex_t = d3.select("input#apdex_t").node().value;
+    $data.filter = d3.select("select#filter").node().selectedOptions[0].value;
+    var nextFile = d3.select("select#filename").node().selectedOptions[0].value;
+    var switchedFile = nextFile != $data.file
+    if (switchedFile) {
+	$data.file = nextFile;
+	$data.filter = "";
+	$data.selectedBucket = -1;
+	$data.selectedTimeslice = -1;
+	showSelection();
+    }
+    $data.value_index = (d3.select("input#enduser").node().checked ? 3 : 4);
+    $data.only = d3.select("input#only").node().checked ? "1" : "0";
+    $data.dispatch.reloadData(switchedFile);
+    return false;
+}
+
+function loadTimesliceData() {
+    d3.selectAll("img.busy").style("display", "inline");
+    d3.json("/data/aggregate/"+$data.file+"?" + 
+            "value_index=" + $data.value_index + "&" +
+            "apdex_t=" + $data.apdex_t + "&" +
+            "buckets=" + ($data.density * $data.width / $data.height) + "&" +
+            "filter=" + $data.filter + "&" +
+            "density=" + $data.density + "&" +
+            "value_index=" + $data.value_index + "&" +
+            "y_max=" + $data.yMax + "&" +
+            "only=" + $data.only,
+
+            function(error, data) {
+		// calculate the maximum bucket for all the histograms.  This will help
+		// us keep the y scale the same
+		$data.bucketMax = 0;
+		// The first bucket is the summary for the entire time range
+		$data.summaryTimeslice = data.shift();
+		$data.summaryTimeslice.time = new Date($data.summaryTimeslice.time);
+		data.forEach(function(d) {
+		    // translate the timestamp into a date for display on the x axis.
+		    d.time = new Date(d.time);
+		    $data.bucketMax = d3.max([$data.bucketMax, d.bucket_max]);
+		});
+		$data.timeslices = data;
+		$data.dispatch.newTimesliceData();
+            });
+
+    d3.select("input#enduser").attr("checked", $data.value_index == 3 ? 'true' : null);
+    d3.select("input#appserver").attr("checked", $data.value_index == 4 ? 'true' : null);
+    d3.select("input#only").attr("checked", $data.only == "1" ? 'true' : null);
+    d3.select("input#except").attr("checked", $data.only == "0" ? 'true' : null);
+}
+
+$data.dispatch.on("reloadData.index", loadTimesliceData);
 $data.dispatch.on("timerangeSelect.index", showSelection);
 $data.dispatch.on("bucketSelect.index", showSelection);
