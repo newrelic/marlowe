@@ -19,6 +19,10 @@ get '/' do
   haml :index, layout: false
 end
 
+get '/about.html' do
+  markdown File.read(File.expand_path("../README.md", __FILE__))
+end
+
 get '/datasets/:view.html' do
   process_params
   read_data
