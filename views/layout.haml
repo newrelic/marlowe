@@ -32,43 +32,59 @@
             %li{class: (params[:view] == "horizon" ? 'active' : nil)}
               %a{href:"/datasets/horizon.html"} Horizon Plots Demo
             %li
-              %a{href:"/about.haml"} About
+              %a{href:"/about.html"} About
   .container
-    %p
-      %a{href: "/datasets/summaryplots.html"}
-    %p 
-      %form{method: 'get', onsubmit: 'return refreshData();'}
-        %select{id: 'filename', name: 'filename', size: 1, onchange: 'refreshData();'}
-          - @files.each do |filename|
-            %option{value: filename, selected: @file == filename}
-              = filename
-        &nbsp; &nbsp;
-        %input#enduser{type: 'radio', name: 'value_index', value: 3, onchange: 'refreshData();'}
-          end user
-        %input#appserver{type: 'radio', name: 'value_index', value: 4, onchange: 'refreshData();'}
-          app server
-        &nbsp; &nbsp;
-        y max:
-        %input{id: 'y_max', type: 'text', size: 6, name: 'y_max', value: @y_max }
-        &nbsp; &nbsp;
-        scatter plot density:
-        %input{id: 'density', type: 'text', size: 6, name: 'density', value: @density }
-        &nbsp; &nbsp;
-        apdex T: 
-        %input{id: 'apdex_t', type: 'text', size: 6, name: 'apdex_t', value: @apdex_t }
-        %input{type: 'submit'}
-        %br
-        %select{id: 'filter', name: 'filter', size: 1, onchange: 'refreshData();'}
-          %option{value: '', selected: @filter_label.nil?}          
-            All
-          - @top10.each do |transaction|
-            %option{value: transaction, selected: transaction == @filter_label}
-              = transaction
-        &nbsp; &nbsp;
-        %input#only{type: 'radio', name: 'only', value: "1", onchange: 'refreshData();'}
-          only
-        %input#except{type: 'radio', name: 'only', value: "0", onchange: 'refreshData();'}
-          except
+    %form.form-horizontal{method: 'get', onsubmit: 'return refreshData();'}
+      .span-row
+        .span4
+          .control-group
+            %label.control-label y max
+            .controls
+              %input{id: 'y_max', type: 'text', size: 6, name: 'y_max', value: @y_max }
+          .control-group
+            %label.control-label scatter plot density
+            .controls
+              %input{id: 'density', type: 'text', size: 6, name: 'density', value: @density }
+          .control-group
+            %label.control-label apdex T
+            .controls
+              %input{id: 'apdex_t', type: 'text', size: 6, name: 'apdex_t', value: @apdex_t }
+        .span4
+          .control-group
+            %label.control-label dataset
+            .controls
+              %select{id: 'filename', name: 'filename', size: 1, onchange: 'refreshData();'}
+                - @files.each do |filename|
+                  %option{value: filename, selected: @file == filename}
+                    = filename
+              &nbsp;
+              %label.radio.inline
+                %input#enduser{type: 'radio', name: 'value_index', value: 3, onchange: 'refreshData();'}
+                end user
+              %label.radio.inline
+                %input#appserver{type: 'radio', name: 'value_index', value: 4, onchange: 'refreshData();'}
+                app server
+
+          .control-group
+            %label.control-label filter
+            .controls
+              %select{id: 'filter', name: 'filter', size: 1, onchange: 'refreshData();'}
+                %option{value: '', selected: @filter_label.nil?}          
+                  All
+                - @top10.each do |transaction|
+                  %option{value: transaction, selected: transaction == @filter_label}
+                    = transaction
+              &nbsp;
+              %label.radio.inline
+                %input#only{type: 'radio', name: 'only', value: "1", onchange: 'refreshData();'}
+                only
+              %label.radio.inline
+                %input#except{type: 'radio', name: 'only', value: "0", onchange: 'refreshData();'}
+                except
+          .control-group
+            .controls
+              %button.btn{type: 'submit'} Submit
+  .container
     = yield
 
   %script{type: 'text/javascript', src: "http://code.jquery.com/jquery.js"}

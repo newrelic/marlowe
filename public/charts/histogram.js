@@ -25,9 +25,9 @@ function histogramUpdate(div, bucket) {
     var bar = svg.select("g.bars").selectAll("rect").data(counts);
     bar.enter()
         .append("rect")
-        .on("click", function(d, i) { 
-	    $data.selectedBucket = i;
-	    $data.dispatch.bucketSelect(i); 
+        .on("click", function(d, bucket) { 
+	    $data.selectedBucket = bucket;
+	    $data.dispatch.bucketSelect(bucket); 
 	});
     bar
         .attr("width", bars(1))
@@ -101,6 +101,24 @@ function histogramInit(div) {
         .style("bottom", $data.margin.bottom + 20)
         .style("right", $data.margin.right)
 
+    $data.dispatch.on("plotSelect.histogram", function(name) {
+	histogramUpdateLines(div);
+    });
+
+    $data.dispatch.on("timerangeSelect.histogram", function() {
+	var col;
+	if ($data.selectedTimeslice == -1)
+	    col = $data.summaryTimeslice;
+	else
+	    col = $data.timeslices[$data.selectedTimeslice];
+	histogramUpdate(div, col);
+	d3.select("img.histogram.busy").style("display", "none");
+    });
+
+    $data.dispatch.on("newTimesliceData", function() {
+	histogramUpdate(div, $data.summaryTimeslice);
+	d3.select("img.histogram.busy").style("display", "none");
+    });
 };
 
 function histogramUpdateLines(div) {
@@ -161,21 +179,3 @@ function histogramUpdateLines(div) {
 
 };
 
-$data.dispatch.on("plotSelect.histogram", function(name) {
-    histogramUpdateLines(d3.select("#histogram-sect"));
-});
-
-$data.dispatch.on("timerangeSelect.histogram", function() {
-    var col;
-    if ($data.selectedTimeslice == -1)
-	col = $data.summaryTimeslice;
-    else
-	col = $data.timeslices[$data.selectedTimeslice];
-    histogramUpdate(d3.select("#histogram-sect > div.histogram"), col);
-    d3.select("img.histogram.busy").style("display", "none");
-});
-
-$data.dispatch.on("newTimesliceData", function() {
-    histogramUpdate(d3.select("#histogram-sect > div.histogram"), $data.summaryTimeslice);
-    d3.select("img.histogram.busy").style("display", "none");
-});

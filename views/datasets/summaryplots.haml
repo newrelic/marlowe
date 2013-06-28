@@ -12,7 +12,7 @@
       $data.filter = "#{@filter_label}";
       $data.only = "#{@only ? '1' : '0'}";
 
-      var refreshData = function() {
+      function refreshData() {
         form = d3.select("form")
         $data.yMax = d3.select("input#y_max").node().value;
         $data.density = d3.select("input#density").node().value;
@@ -98,9 +98,6 @@
        }
        .legenditem line {
        }
-       #histogram-sect > div.histogram {
-         position: relative;
-       }
        #summary-values {
          
        }
@@ -130,7 +127,6 @@
          font-size: 18px;
          text-align: center;
        }
-
        .summary-item div.bg {
          position: absolute;
          float: left;
@@ -151,41 +147,33 @@
         position: relative;
         clear: both;
       }
-      #timeseries-sect {
-        left: 0px;
-        float: left;
-      }
-      #histogram-sect {
-        position: absolute;
-        left: 720px;     
-        float: left;
-      }
 
-#top-graph.chart-row-section
-  #timeseries-sect
+.row
+  .span6
     %h1 
       Timeseries Plots
       %img.timeseries.busy{src:'/images/busy.gif', style: 'display:none'}
     %p 
       Click on any item in the legend to toggle its display
-    .timeseries
-  #histogram-sect
+    #timeseries
+  .span6
     %h1 
       Response Time Distribution
       %img.histogram.busy{src:'/images/busy.gif', style: 'display:none'}
     %p
       Show a histogram with summary bars at the different statistical aggregates: mean, median, 95 percentile, etc
-    .histogram
+    #histogram
 
-#summary-values-sect.chart-row-section
-  %h1
-    %span#range
-      All Data
-    %button#reset{style: 'display: none', onClick: 'resetSelection();'}
-      RESET
+.row
+  .span12
+    %h1
+      %span#range All Data
+      %button#reset{style: 'display: none', onClick: 'resetSelection();'}
+        RESET
+    #summary-values-sect
 
 :javascript
-  timeseriesInit(d3.select("#timeseries-sect > div.timeseries"));
-  histogramInit(d3.select("#histogram-sect > div.histogram"));
+  timeseriesInit(d3.select("div#timeseries"));
+  histogramInit(d3.select("div#histogram"));
   summaryInit(d3.select("div#summary-values-sect"));
   loadCharts(true);

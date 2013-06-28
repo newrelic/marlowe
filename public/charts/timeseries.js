@@ -141,6 +141,16 @@ function timeseriesInit(div) {
         .on("click", function(d) {
             togglePlotline(d);
         });
+
+    $data.dispatch.on("plotSelect.timeseries", function(name) {
+	timeseriesUpdateLines(div);
+    });
+
+    $data.dispatch.on("newTimesliceData.timeseries", function() {
+	timeseriesUpdate(div);
+	d3.select("img.timeseries.busy").style("display", "none");
+    });
+
 };
 
 function timeseriesUpdateLines(div) {
@@ -306,11 +316,3 @@ function timeseriesUpdate(div) {
     timeseriesUpdateLines(div);
 };
 
-$data.dispatch.on("plotSelect.timeseries", function(name) {
-    timeseriesUpdateLines(d3.select("#timeseries-sect"));
-});
-
-$data.dispatch.on("newTimesliceData.timeseries", function() {
-    timeseriesUpdate(d3.select("#timeseries-sect"));
-    d3.select("img.timeseries.busy").style("display", "none");
-});

@@ -147,9 +147,6 @@
      }
      .legenditem line {
      }
-     #histogram-sect > div.histogram {
-       position: relative;
-     }
      div.summary-row {
        display: table-row;
        position: relative;
@@ -203,34 +200,23 @@
     #treemap-sect p.range {
       font-size: 1.4em;
     }
-    .chart-row-section {
-      position: relative;
-      clear: both;
-    }
-    #timeseries-sect {
-      left: 0px;
-      float: left;
-    }
-    #histogram-sect {
-      position: absolute;
-      left: 720px;     
-      float: left;
-    }
 
-%h1
-  %span#range
-    All Data
-  %button#reset{style: 'display: none', onClick: 'resetSelection();'}
-    RESET
-#top-graph.chart-row-section
-  #timeseries-sect
+.row
+  .span12
+    %h2
+      %span#range
+        All Data
+      %button#reset{style: 'display: none', onClick: 'resetSelection();'}
+        RESET
+.row
+  #timeseries-sect.span6
     %h1 
       Timeseries Plots
       %img.timeseries.busy{src:'/images/busy.gif', style: 'display:none'}
     %p 
       Click on any item in the legend to toggle its display
     .timeseries
-  #histogram-sect
+  #histogram-sect.span6
     %h1 
       Response Time Distribution
       %img.histogram.busy{src:'/images/busy.gif', style: 'display:none'}
@@ -238,22 +224,16 @@
       Show a histogram with summary bars at the different statistical aggregates: mean, median, 95 percentile, etc
     .histogram
 
-  #treemap-sect.chart-row-section
+.row
+  .span12
     %h1 
       Transaction Breakdown
       %img.treemap.busy{src:'/images/busy.gif', style: 'display:none'}
-    -#%form
-      Breakdown by: 
-      %label
-        %input#size{:checked => "", :name => "mode", :type => "radio", :value => "size"}/
-        Total time
-      %label
-        %input#count{:name => "mode", :type => "radio", :value => "count"}/
-        Call count
-  %p
-    Click Scatterplot or Histogram to map activity for a single column.
-    %a{href: '/data/treemap/nr-queuing-spike.json', target: "_new"}
-      See sample json.
+    %p
+      Click Scatterplot or Histogram to map activity for a single column.
+      %a{href: '/data/treemap/nr-queuing-spike.json', target: "_new"}
+        See sample json.
+    #treemap-sect
 
 :javascript
 

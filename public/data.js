@@ -7,8 +7,8 @@ $data = {};
 $data.file = "";
 // General layout parameters to ensure the charts have roughly the same
 // dimensions
-$data.width = 600;
-$data.height = 300;
+$data.width = 500;
+$data.height = 280;
 $data.margin = {top: 8, right: 50, bottom: 30, left: 50}
 $data.yMax = 5000;
 $data.density = 50;
