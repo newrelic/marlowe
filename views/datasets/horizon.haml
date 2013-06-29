@@ -1,0 +1,47 @@
+- content_for(:head) do
+  %script{type: 'text/javascript', src: "/charts/timeseries.js"}
+  %script{type: 'text/javascript', src: "/charts/horizon.js"}
+  :javascript
+    $data.width = 800
+    $data.height = 100
+    $data.file = "#{@file}";
+    $data.yMax = #{@y_max};
+    $data.density = #{@density};
+    $data.apdex_t = #{@apdex_t};
+    $data.value_index = #{@value_index};
+    $data.filter = "#{@filter_label}";
+    $data.only = "#{@only ? '1' : '0'}";
+
+  :css
+    #horizon-controls {
+      width: 940px;
+      padding: 10px;
+      z-index: 1;
+    }
+
+
+  :javascript
+
+
+.row
+  .span4
+    .form-inline
+      -#
+        %input.inline#horizon-mode-mirror{name:"mode", type:"radio", value:"mirror", checked:true}
+          Mirror
+        %input.inline#horizon-mode-offset{name:"mode", type:"radio", value:"offset"}
+          Offset
+      %span#horizon-bands
+        %span#horizon-bands-value 1
+        %button.first &#x2212
+        %button.last +
+      %img.horizon.busy{src:'/images/busy.gif', style: 'display:none'}
+
+.row
+  .span12
+    #horizon-chart
+
+:javascript
+
+  horizonInit(d3.select("#horizon-chart"));
+  $data.dispatch.reloadData();

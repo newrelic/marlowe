@@ -20,6 +20,7 @@ $data.value_index = 3;
 
 $data.dispatch = d3.dispatch("newTreemapData",    // new treemap data loaded
 			     "newTimesliceData",  // new timeslice data loaded 
+			     "newHorizonData",  // new timeslice data loaded 
 			     "timerangeSelect",   // new timerange selection
 			     "reloadData",        // settings changed, go get new data
 			     "bucketSelect",      // new value range selected

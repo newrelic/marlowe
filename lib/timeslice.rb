@@ -15,6 +15,7 @@ class Timeslice
   # - timestamp is ms time since UTC epoch
   # - duration is duration of the timeslice in milliseconds
   def initialize(timestamp, duration, opts = {})
+    @breakdown = {}
     @timestamp = timestamp
     @duration = duration
     @value_index = opts[:value_index] || 4
@@ -51,6 +52,12 @@ class Timeslice
     if @histogram_buckets
       @histogram_buckets[[(v / @histogram_bucket_size).to_i, @histogram_bucket_count].min] += 1
     end
+
+    # Transaction name, or other attribute:
+    label = record[2]
+    @breakdown[label] ||= [0, 0]
+    @breakdown[label][0] += 1
+    @breakdown[label][1] += v
   end
 
   alias :"<<" :add
@@ -60,7 +67,7 @@ class Timeslice
   end
 
   def record
-    r = {
+    return {
       time: @timestamp,
       count: @values.size,
       rpm: throughput,
@@ -90,7 +97,9 @@ class Timeslice
       # The last bucket of the histogram is outliers and goes
       # on a separate attribute.
       hist: hist,
-      bucket_max: bucket_max
+      bucket_max: bucket_max,
+      # order the breakdown by count descending
+      breakdown: Hash[*@breakdown.to_a.sort_by{|k,v| -v[0]}.flatten(1)],
     }
   end
 
