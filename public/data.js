@@ -127,7 +127,8 @@ function refreshData() {
     return false;
 }
 
-function loadTimesliceData() {
+function loadTimesliceData(switchedFile) {
+
     d3.selectAll("img.busy").style("display", "inline");
     d3.json("/data/aggregate/"+$data.file+"?" + 
             "value_index=" + $data.value_index + "&" +
@@ -152,9 +153,21 @@ function loadTimesliceData() {
 		    $data.bucketMax = d3.max([$data.bucketMax, d.bucket_max]);
 		});
 		$data.timeslices = data;
+		if (switchedFile) {
+		    var scopes = d3.keys($data.summaryTimeslice.breakdown).slice(0,20);
+		    // update the options menu for the scope
+		    scopes.unshift("")
+		    var options = d3.select("select#filter").selectAll("option").data(scopes);
+		    options.enter()
+			.append("option")
+		    options
+			.attr("value",String)
+			.attr("selected", function(m) { return (m == $data.filter) ? "true" : null; })
+			.text(function(m) { return m == "" ? "All" : m });
+		    options.exit().remove();
+		}
 		$data.dispatch.newTimesliceData();
             });
-
     d3.select("input#enduser").attr("checked", $data.value_index == 3 ? 'true' : null);
     d3.select("input#appserver").attr("checked", $data.value_index == 4 ? 'true' : null);
     d3.select("input#only").attr("checked", $data.only == "1" ? 'true' : null);

@@ -10,7 +10,7 @@ function horizonInit(div) {
     function horizonUpdate() {
 
 	// get the list of transaction names
-	var names = d3.keys($data.summaryTimeslice.breakdown).slice(0,20);
+	var names = d3.keys($data.summaryTimeslice.breakdown).slice(0,10);
 
 	var parents = div.selectAll("div.sparkline")
 	    .data(names);
@@ -18,13 +18,18 @@ function horizonInit(div) {
 	var row = parents.enter()
 	    .append("div")
 	    .attr("class", "sparkline row");
-        row.append("div").attr("class", "span3").text(String);
+
+        row
+	    .append("div").attr("class", "span3");
 	row
             .append("div").attr("class", "span9")
             .append("svg")
-	    .attr("width", $data.width);
+	    .attr("width", $data.width)
 
-
+        parents
+	    .select("div.span3")
+	    .text(String); //function(d){ return "bill "+d});
+           
 	parents
 	    .selectAll("svg")
 	    .data(function(name) { 
@@ -32,7 +37,7 @@ function horizonInit(div) {
 		    return [new Date(timeslice.time), 
 			    timeslice.breakdown[name] ? timeslice.breakdown[name][1]/timeslice.breakdown[name][0] : 0];
 		})]})
-	    .attr("height", $data.height)
+	    .attr("height", $data.height / chart.bands())
 	    .call(chart);
 
 	parents.exit().remove();

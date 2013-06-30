@@ -55,11 +55,8 @@ get '/data/aggregate/:file' do
 end
 
 get '/data/treemap/:file' do
-  flat_counts = []
-  tree = refactorToTreemap 'root', tree_data, flat_counts
-  # return a json with two parts: a tree structure and a flat list
-  # of counts for each transaction type
-  JSON.pretty_generate('tree' => tree, 'counts' => flat_counts.sort_by(&:last).reverse)
+  tree = refactorToTreemap 'root', tree_data
+  JSON.pretty_generate('tree' => tree)
 end
 
 helpers do
@@ -166,13 +163,12 @@ helpers do
 
   # We need to go back through the treemap and make sure the name at each node consists
   # of the full "path" to the node.
-  def refactorToTreemap (name, nodes, leaves = [])
+  def refactorToTreemap (name, nodes)
     if (leaf = nodes["leaf stats"])
       leaf['name'] = name
-      leaves << [ leaf["title"], leaf["count"] ]
       return leaf
     else
-      children = nodes.keys.map{|key| refactorToTreemap key, nodes[key], leaves}
+      children = nodes.keys.map{|key| refactorToTreemap key, nodes[key]}
       return {'name' => name, 'children' => children}
     end
   end
