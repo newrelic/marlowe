@@ -6,7 +6,7 @@
     $data.height = 100
     $data.file = "#{@file}";
     $data.yMax = #{@y_max};
-    $data.density = #{@density};
+    $data.density = 15
     $data.apdex_t = #{@apdex_t};
     $data.value_index = #{@value_index};
     $data.filter = "#{@filter_label}";
@@ -18,23 +18,31 @@
       padding: 10px;
       z-index: 1;
     }
-
-
+    .form-inline {
+      margin-bottom: 24px;
+    }
+    .checkbox {
+      margin-left: 24px;
+    }
+    #densityGroup, #apdexTGroup {
+      display: none;
+    }
+    .sparkline .name {
+      text-align: right;
+    }
   :javascript
 
 
 .row
   .span4
-    .form-inline
-      -#
-        %input.inline#horizon-mode-mirror{name:"mode", type:"radio", value:"mirror", checked:true}
-          Mirror
-        %input.inline#horizon-mode-offset{name:"mode", type:"radio", value:"offset"}
-          Offset
+    #horizon-controls.form-inline
       %span#horizon-bands
         %span#horizon-bands-value 1
         %button.first &#x2212
         %button.last +
+      %label.checkbox.inline
+        %input#unnormalized{type: 'checkbox', name: 'normalized', value: 'true', onchange: 'refreshData();'}
+        Use local Y Max
       %img.horizon.busy{src:'/images/busy.gif', style: 'display:none'}
 
 .row

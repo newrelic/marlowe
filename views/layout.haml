@@ -37,15 +37,15 @@
     %form.form-horizontal{method: 'get', onsubmit: 'return refreshData();'}
       .span-row
         .span4
-          .control-group
+          .control-group#yMaxGroup
             %label.control-label y max
             .controls
-              %input{id: 'y_max', type: 'text', size: 6, name: 'y_max', value: @y_max }
-          .control-group
+              %input{id: 'y_max', type: 'text', size: 6, name: 'y_max' }
+          .control-group#densityGroup
             %label.control-label scatter plot density
             .controls
               %input{id: 'density', type: 'text', size: 6, name: 'density', value: @density }
-          .control-group
+          .control-group#apdexTGroup
             %label.control-label apdex T
             .controls
               %input{id: 'apdex_t', type: 'text', size: 6, name: 'apdex_t', value: @apdex_t }
@@ -89,3 +89,9 @@
 
   %script{type: 'text/javascript', src: "http://code.jquery.com/jquery.js"}
   %script{type: 'text/javascript', src: "/js/bootstrap.min.js"}
+
+  :javascript
+    d3.select("input#y_max").attr("value", $data.yMax);
+    d3.select("input#density").attr("value", $data.density);
+    d3.select("input#apdex_t").attr("value", $data.apdex_t);
+

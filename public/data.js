@@ -177,3 +177,4 @@ function loadTimesliceData(switchedFile) {
 $data.dispatch.on("reloadData.index", loadTimesliceData);
 $data.dispatch.on("timerangeSelect.index", showSelection);
 $data.dispatch.on("bucketSelect.index", showSelection);
+

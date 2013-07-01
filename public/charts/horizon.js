@@ -9,8 +9,12 @@ function horizonInit(div) {
 
     function horizonUpdate() {
 
-	// get the list of transaction names
-	var names = d3.keys($data.summaryTimeslice.breakdown).slice(0,10);
+        var names = d3.keys($data.summaryTimeslice.breakdown).slice(0,10);
+        var localMax = d3.select("input#unnormalized").node().checked;
+	if (localMax) 
+	    chart.yMax(null);
+        else
+	    chart.yMax($data.yMax);
 
 	var parents = div.selectAll("div.sparkline")
 	    .data(names);
@@ -20,7 +24,7 @@ function horizonInit(div) {
 	    .attr("class", "sparkline row");
 
         row
-	    .append("div").attr("class", "span3");
+	    .append("div").attr("class", "span3 name");
 	row
             .append("div").attr("class", "span9")
             .append("svg")
@@ -28,7 +32,7 @@ function horizonInit(div) {
 
         parents
 	    .select("div.span3")
-	    .text(String); //function(d){ return "bill "+d});
+	    .text(String);
            
 	parents
 	    .selectAll("svg")
@@ -38,14 +42,11 @@ function horizonInit(div) {
 			    timeslice.breakdown[name] ? timeslice.breakdown[name][1]/timeslice.breakdown[name][0] : 0];
 		})]})
 	    .attr("height", $data.height / chart.bands())
-	    .call(chart);
+	    .call(chart.duration(1000));
 
 	parents.exit().remove();
         d3.select("img.busy").style("display", "none");
     }
-    d3.selectAll("#horizon-controls input[name=mode]").on("change", function() {
-	svg.call(chart.duration(0).mode(this.value));
-    });
     d3.selectAll("#horizon-bands button").data([-1, 1]).on("click", function(d) {
 	var n = Math.max(1, chart.bands() + d);
 	d3.select("#horizon-bands-value").text(n);
@@ -55,6 +56,7 @@ function horizonInit(div) {
 	    .duration(1000)
 	    .attr("height", $data.height / n);
     });
+    var checkbox = d3.select("input#unnormalized");
     $data.dispatch.on("newTimesliceData.horizon", horizonUpdate);  
 }
 
@@ -68,6 +70,7 @@ function horizonInit(div) {
         y = d3_horizonY,
         w = 960,
         h = 40,
+        yMax,
         duration = 0;
 
 	var color = d3.scale.linear()
@@ -81,7 +84,7 @@ function horizonInit(div) {
 		n = 2 * bands + 1,
 		xMin = Infinity,
 		xMax = -Infinity,
-		yMax = -Infinity,
+		ymm = -Infinity,
 		x0, // old x-scale
 		y0, // old y-scale
 		id; // unique id for paths
@@ -92,14 +95,14 @@ function horizonInit(div) {
 		    yv = y.call(this, d, i);
 		    if (xv < xMin) xMin = xv;
 		    if (xv > xMax) xMax = xv;
-		    if (-yv > yMax) yMax = -yv;
-		    if (yv > yMax) yMax = yv;
+		    if (-yv > ymm) ymm = -yv;
+		    if (yv > ymm) ymm = yv;
 		    return [xv, yv];
 		});
 
 		// Compute the new x- and y-scales, and transform.
 		var x1 = d3.scale.linear().domain([xMin, xMax]).range([0, w]),
-		y1 = d3.scale.linear().domain([0, yMax]).range([0, h * bands]),
+		y1 = d3.scale.linear().domain([0, yMax || ymm]).range([0, h * bands]),
 		t1 = d3_horizonTransform(bands, h, mode);
 
 		// Retrieve the old scales, if this is an update.
@@ -213,6 +216,11 @@ function horizonInit(div) {
 	    return horizon;
 	};
 
+        horizon.yMax = function(ym) {
+	    if (!arguments.length) return yMax;
+	    yMax = ym;
+	    return horizon;
+        };
 	horizon.y = function(z) {
 	    if (!arguments.length) return y;
 	    y = z;
