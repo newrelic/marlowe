@@ -187,11 +187,13 @@ function timeseriesUpdateLines(div) {
         var axis = y;
         if (m == "apdex") axis = apdex;
         return d3.svg.line()
+	    .interpolate("basis")
             .x(function(q) { return q.time; })
             .y(function(q,i) { return axis($data.timeslices[i][m]); })
     };
     function seriesPlotLine() {
         return d3.svg.line()
+	    .interpolate("basis")
             .x(function(q) { return q.time; })
             .y(function(q,i) { return q.val; })
     };
@@ -200,7 +202,8 @@ function timeseriesUpdateLines(div) {
     lines
         .select("path")
         .datum(plotData)
-        .transition().duration(500)
+        .transition()
+	.duration(500)
         .attr("d", seriesPlotLine());
 
     lines.enter()
@@ -297,7 +300,6 @@ function timeseriesUpdate(div) {
         .append("rect")
         .attr("class", "cell")
         .attr("x", 0)
-        .style("opacity", 1e-06)
     rect
         .attr("width", Math.round(cellWidth))
         .attr("height", Math.round(cellHeight))
@@ -307,11 +309,9 @@ function timeseriesUpdate(div) {
         .attr("fill", function(d) { 
 	    return color(d.score);
 	})
-        .transition().duration(250)
         .style("opacity", 1)
 
     rect.exit()
-        .transition().duration(250)
         .style("opacity", 0)
         .remove();
 
