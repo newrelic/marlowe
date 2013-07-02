@@ -52,9 +52,6 @@
     }
 
   :css
-     body {
-       font: 10px sans-serif;
-     }
      .axis path,
      .axis line {
        fill: none;
@@ -145,19 +142,22 @@
       %button#reset{style: 'display: none', onClick: 'resetSelection();'}
         RESET
 .row
-  #timeseries-sect.span6
+  .span6
     %h1 
       Timeseries Plots
       %img.timeseries.busy{src:'/images/busy.gif', style: 'display:none'}
     %p 
       Click on any item in the legend to toggle its display
-    .timeseries
-  #histogram-sect.span6
+  .span6
     %h1 
       Response Time Distribution
       %img.histogram.busy{src:'/images/busy.gif', style: 'display:none'}
     %p
       Show a histogram with summary bars at the different statistical aggregates: mean, median, 95 percentile, etc
+.row
+  #timeseries-sect.span6
+    .timeseries
+  #histogram-sect.span6
     .histogram
 
 .row
