@@ -70,7 +70,7 @@
 .rpm {
 	stroke: #333;
 	background: #F0F;
-	stroke-dasharray: 15, 5;
+	stroke-dasharray: 8, 3;
 	stroke-width: 1px;
 }
 .apdex {

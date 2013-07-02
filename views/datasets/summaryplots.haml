@@ -10,7 +10,8 @@
     $data.value_index = #{@value_index};
     $data.filter = "#{@filter_label}";
     $data.only = "#{@only ? '1' : '0'}";
-
+    $data.width = 800;
+    $data.height = 300;
 
   :css
        body {
@@ -83,11 +84,13 @@
          opacity: 0.2;
        }
        div.outliers {
-         position: absolute;
          background: rgba(220,220,220,0.5);
          padding: 6px;
          font-size: 16px;
          border-width: 2px;
+         xleft: 750px;
+         xwidth: 120px;
+         xtop: -80px;
        }
       .chart-row-section {
         position: relative;
@@ -95,14 +98,15 @@
       }
 
 .row
-  #timeseries-sect.span6
+  #timeseries-sect.span12
     %h1 
       Timeseries Plots
       %img.timeseries.busy{src:'/images/busy.gif', style: 'display:none'}
     %p 
       Click on any item in the legend to toggle its display
     #timeseries
-  .span6
+.row
+  .span12
     %h1 
       Response Time Distribution
       %img.histogram.busy{src:'/images/busy.gif', style: 'display:none'}

@@ -98,8 +98,10 @@ function histogramInit(div) {
     // outlier text box
     div.append("div")
 	.attr("class", "outliers")
-        .style("bottom", $data.margin.bottom + 20)
-        .style("right", $data.margin.right)
+        .style("position", "relative")
+        .style("width", "100px")
+        .style("bottom", "80px")
+        .style("left", $data.width + "px");
 
     $data.dispatch.on("plotSelect.histogram", function(name) {
 	histogramUpdateLines(div);
