@@ -1,4 +1,4 @@
-function timeseriesInit(div) {
+function timeseriesInit(div, legendPlots) {
 
     var svg = div.append("svg")
 	.attr("id", "timeseries")
@@ -8,6 +8,7 @@ function timeseriesInit(div) {
         .attr("transform", "translate(" + $data.margin.left + ","+ $data.margin.top + ")");
 
     var obj = svg.node();
+    obj.legendPlots = legendPlots;
     obj.xScale = d3.time.scale()
         .rangeRound([0, $data.width]);
     obj.yScale = d3.scale.linear()
@@ -64,7 +65,7 @@ function timeseriesInit(div) {
     chart.append("g")
         .attr("class", "plots");
 
-    var legendItemWidth = Math.floor($data.width / ($data.allPlots.length + 1)),
+    var legendItemWidth = Math.floor($data.width / (legendPlots.length + 1)),
     legendItemHeight = 42,
     margin = 4;
 
@@ -73,7 +74,7 @@ function timeseriesInit(div) {
         .attr("transform", "translate(0," + ($data.height + $data.margin.top + 20) + ")");
 
     legend.selectAll("g.timeseries")
-        .data($data.allPlots, String);
+        .data(legendPlots, String);
 
     g = legend.append("g")
         .attr("class", "heatmap")
@@ -108,7 +109,7 @@ function timeseriesInit(div) {
 
     // Timeseries items (mean, median, exc) legend items
     g = legend.selectAll("g.timeseries")
-        .data($data.allPlots, String)
+        .data(legendPlots, String)
         .enter()
         .append("g")
         .attr("class", "timeseries")
@@ -159,8 +160,9 @@ function timeseriesUpdateLines(div) {
     var x = obj.xScale;
     var y = obj.yScale;
     var apdex = obj.apdexScale;
+    var legendPlots = obj.legendPlots;
     x.domain(d3.extent($data.timeslices, function(d) { return d.time; }));
-    svg.select("g.legend").selectAll("g.timeseries").data($data.allPlots, String).select("line")
+    svg.select("g.legend").selectAll("g.timeseries").data(legendPlots, String).select("line")
         .transition().duration(500)
         .style("opacity", function(d) {
             return $data.displayedPlots.indexOf(d) >= 0 ? "1" : "0";

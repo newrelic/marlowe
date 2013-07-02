@@ -30,9 +30,6 @@ $data.dispatch = d3.dispatch("newTreemapData",    // new treemap data loaded
 $data.filter = ""
 $data.only = "1"
 
-// This defines the attributes of the timeslice record that are available for selection.  It could
-// also include min and max.  The displayedPlots are the currently viewed plots and changes dynamically.
-$data.allPlots = ["mean", "g_mean", "mode", "median", "pct_68", "pct_95", "pct_99", "apdex", "rpm"];
 $data.displayedPlots = ["mean"];
 
 // The timeslice array contains objects with fields that correspond to the plot values for each timeslice

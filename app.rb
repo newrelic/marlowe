@@ -16,7 +16,7 @@ before '/data/:type/:file' do |type, file|
 end  
 
 get '/' do
-  haml :index, layout: false
+  haml :index
 end
 
 get '/about.html' do

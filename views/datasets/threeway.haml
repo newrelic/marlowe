@@ -47,19 +47,6 @@
         "cols="+ Math.floor($data.density * ($data.width / $data.height)), 
         function(error, data) {
           $data.treemapRoot = data.tree;
-          if (switchedFile) {
-            var scopes = data.counts.sort(function(a,b) { return d3.descending(a[1],b[1]); }).map(function(v) { return v[0]; }).slice(0,20);
-            // update the options menu for the scope
-            scopes.unshift("")
-            var options = d3.select("select#filter").selectAll("option").data(scopes);
-            options.enter()
-              .append("option")
-            options
-              .attr("value",String)
-              .attr("selected", function(m) { return (m == $data.filter) ? "true" : null; })
-              .text(function(m) { return m == "" ? "All" : m });
-            options.exit().remove();
-          }
           $data.dispatch.newTreemapData();
       });
     }
@@ -186,7 +173,9 @@
 
 :javascript
 
-  timeseriesInit(d3.select("#timeseries-sect > div.timeseries"));
+  // This defines the attributes of the timeslice record that are in the legend of the plot.
+  var plots = ["mean", "mode", "median", "pct_99", "apdex", "rpm"];
+  timeseriesInit(d3.select("#timeseries-sect > div.timeseries"), plots);
   histogramInit(d3.select("#histogram-sect > div.histogram"));
   treemapInit(d3.select("div#treemap-sect"));
   $data.dispatch.on("reloadData.treemap", loadTreemapData);

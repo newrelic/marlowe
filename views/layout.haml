@@ -54,7 +54,7 @@
             %label.control-label dataset
             .controls
               %select{id: 'filename', name: 'filename', size: 1, onchange: 'refreshData();'}
-                - @files.each do |filename|
+                - (@files||[]).each do |filename|
                   %option{value: filename, selected: @file == filename}
                     = filename
               &nbsp;
@@ -71,7 +71,7 @@
               %select{id: 'filter', name: 'filter', size: 1, onchange: 'refreshData();'}
                 %option{value: '', selected: @filter_label.nil?}          
                   All
-                - @top10.each do |transaction|
+                - (@top10||[]).each do |transaction|
                   %option{value: transaction, selected: transaction == @filter_label}
                     = transaction
               &nbsp;
