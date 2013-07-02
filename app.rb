@@ -73,6 +73,7 @@ helpers do
     @filter_label = params[:filter] if params[:filter] && !params[:filter].empty?
     @only = @filter_label.nil? || params[:only] != "0"
     @file = params[:file] || params[:filename] || "nr-queuing-spike.json"
+    @log_transform = params[:log] == "1"
   end
 
   def read_data
@@ -102,6 +103,7 @@ helpers do
                               :histogram_bucket_size => histogram_bucket_size,
                               :histogram_bucket_count => histogram_bucket_count,
                               :value_index => @value_index, 
+                              :log_transform => @log_transform,
                               :apdex_t => @apdex_t)
 
     end
@@ -109,6 +111,7 @@ helpers do
                          end_date - start_date,
                          :histogram_bucket_size => histogram_bucket_size,
                          :histogram_bucket_count => histogram_bucket_count,
+                         :log_transform => @log_transform,
                          :value_index => @value_index, 
                          :apdex_t => @apdex_t)
 

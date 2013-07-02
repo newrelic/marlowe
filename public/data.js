@@ -31,6 +31,9 @@ $data.dispatch = d3.dispatch("newTreemapData",    // new treemap data loaded
 $data.filter = ""
 $data.only = "1"
 
+// Transform the data into log space after loading the dataset
+$data.logTransform = false;
+
 $data.displayedPlots = ["mean"];
 
 // The timeslice array contains objects with fields that correspond to the plot values for each timeslice
@@ -121,6 +124,7 @@ function refreshData() {
     }
     $data.value_index = (d3.select("input#enduser").node().checked ? 3 : 4);
     $data.only = d3.select("input#only").node().checked ? "1" : "0";
+    $data.logTransform = d3.select("input#log_transform").node().checked ? "1" : "0";
     $data.dispatch.reloadData(switchedFile);
     return false;
 }
@@ -136,6 +140,7 @@ function loadTimesliceData(switchedFile) {
             "density=" + $data.density + "&" +
             "value_index=" + $data.value_index + "&" +
             "y_max=" + $data.yMax + "&" +
+            "log=" + $data.logTransform + "&" +
             "only=" + $data.only,
 
             function(error, data) {

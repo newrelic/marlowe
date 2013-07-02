@@ -23,6 +23,7 @@ class Timeslice
     @histogram_bucket_size =  opts[:histogram_bucket_size]
     @t = (opts[:apdex_t] || 500).to_f
     @values = []
+    @log_transform = opts[:log_transform]
     @apdex_f = @apdex_t = @total = @sum_of_squares = @sum_of_log_squares = @sum_of_logs = 0
     if @histogram_bucket_size
       @histogram_bucket_count ||= 10000 / @histogram_bucket_size
@@ -35,6 +36,9 @@ class Timeslice
   def add(record) 
     v = record[@value_index]
     return if v.zero?
+    if @log_transform
+      v = 500 * Math.log(v)
+    end
     @values << v
     @min = v if @min.nil? || @min > v
     @max = v if @max.nil? || @max < v

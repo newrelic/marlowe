@@ -48,6 +48,11 @@
             .controls
               %input#apdex_t{type: 'text', size: 6, name: 'apdex_t' }
               %input#slider{type:'range', min: 100, step: 100, max: 5100, onchange: "updateApdex()"}
+          .control-group#logTransformGroup
+            .controls
+              %label.inline.checkbox
+                %input#log_transform{type: 'checkbox', name: 'log_transform', onchange: 'refreshData();' }
+                transform to logspace
         .span4
           .control-group
             %label.control-label dataset
@@ -95,6 +100,7 @@
     d3.select("input#density").attr("value", $data.density);
     d3.select("input#apdex_t").attr("value", $data.apdex_t);
     d3.select("input#slider").attr("value", $data.apdex_t);
+    d3.select("input#log_transform").attr("checked", $data.logTransform ? true : null);
     var sliderTimer;
     function updateApdex() {
       var val = d3.select("#slider").node().value;
