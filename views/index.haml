@@ -1,13 +1,17 @@
+- content_for :head do
 
-%body
-
-  %h2 The Marlowe Project
+  :css
+    form {
+      display: none;
+    }
+.span12
+  %h1 The Marlowe Project
   %p
     Marlowe is meant to be a workspace for experimenting with visualizing and interacting with web transaction data
     using D3.  For more information, refer to the 
     %a{href: "http://github.com/newrelic/marlowe"}
       Project Readme file.
-  %h2 Experiments
+  %h3 Experiments
   %p
     These is meant to be an index of pages showing different visualizations of datasets.  If you want
     to add a brand new experiment, feel free to add to the list. 
@@ -18,4 +22,7 @@
     %li
       %a{href:"datasets/summaryplots.html"}
         Survey of summary measures (arithmetic, geometric, percentiles...)
+    %li
+      %a{href:"datasets/horizon.html"}
+        Using a horizon chart to breakdown the respons times
 
