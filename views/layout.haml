@@ -44,11 +44,12 @@
           .control-group#densityGroup
             %label.control-label scatter plot density
             .controls
-              %input{id: 'density', type: 'text', size: 6, name: 'density', value: @density }
+              %input{id: 'density', type: 'text', size: 6, name: 'density' }
           .control-group#apdexTGroup
             %label.control-label apdex T
             .controls
-              %input{id: 'apdex_t', type: 'text', size: 6, name: 'apdex_t', value: @apdex_t }
+              %input#apdex_t{type: 'text', size: 6, name: 'apdex_t' }
+              %input#slider{type:'range', min: 100, step: 100, max: 5100, onchange: "updateApdex()"}
         .span4
           .control-group
             %label.control-label dataset
@@ -91,7 +92,19 @@
   %script{type: 'text/javascript', src: "/js/bootstrap.min.js"}
 
   :javascript
+
     d3.select("input#y_max").attr("value", $data.yMax);
     d3.select("input#density").attr("value", $data.density);
     d3.select("input#apdex_t").attr("value", $data.apdex_t);
-
+    d3.select("input#slider").attr("value", $data.apdex_t);
+    var sliderTimer;
+    function updateApdex() {
+      var val = d3.select("#slider").node().value;
+      d3.select("#apdex_t").node().value = val;
+      $data.apdex_t = val;
+      $data.dispatch.newTimesliceData();
+      if (sliderTimer) {
+        clearTimeout(sliderTimer);
+      }
+      sliderTimer = setTimeout(refreshData, 500);
+    }
