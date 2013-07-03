@@ -80,8 +80,9 @@ function initTraffic(div) {
     function gravity(alpha) {
 	return function(d) {
             d.y += (d.cy - d.y) * alpha;
-            var now = new Date().getTime();
-            var pos = width * (now - d.start)/d.client;
+            var now = new Date().getTime(); 
+            // Add a 200ms to ensure the circle makes it all the way across
+            var pos = width * Math.min(1, (now + 200 - d.start)/d.client);
             d.x += (pos - d.x) * alpha;
 	};
     }
