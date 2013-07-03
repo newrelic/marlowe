@@ -45,6 +45,7 @@ get '/datasets/:view.html' do
   haml :"datasets/#{params[:view]}"
 end
 
+
 # DATA HANDLERS
 # The remaining paths fetch the data files and apply the respective transformation
 # and return the json
@@ -52,6 +53,10 @@ end
 # Get the "measures of central tendency"
 get '/data/aggregate/:file' do 
   JSON.pretty_generate timeseries_data
+end
+
+get '/data/raw/:file' do
+  JSON.pretty_generate(@data)
 end
 
 get '/data/treemap/:file' do

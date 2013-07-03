@@ -22,11 +22,13 @@
         .nav-collapse.collapse
           %ul.nav
             %li{class: (params[:view] == "threeway" ? 'active' : nil)}
-              %a{href:"/datasets/threeway.html"} Treemap Demo
+              %a{href:"/datasets/threeway.html"} Treemap
             %li{class: (params[:view] == "summaryplots" ? 'active' : nil)}
-              %a{href:"/datasets/summaryplots.html"} Summary Plots Demo
+              %a{href:"/datasets/summaryplots.html"} Summary Plots
             %li{class: (params[:view] == "horizon" ? 'active' : nil)}
-              %a{href:"/datasets/horizon.html"} Horizon Plots Demo
+              %a{href:"/datasets/horizon.html"} Horizon Plots
+            %li{class: (params[:view] == "traffic" ? 'active' : nil)}
+              %a{href:"/datasets/traffic.html"} Traffic Animation
             %li
               %a{href:"/about.html"} About
   .container
@@ -38,7 +40,7 @@
             .controls
               %input{id: 'y_max', type: 'text', size: 6, name: 'y_max' }
           .control-group#densityGroup
-            %label.control-label scatter plot density
+            %label.control-label plot density
             .controls
               %input{id: 'density', type: 'text', size: 6, name: 'density' }
           .control-group#apdexTGroup

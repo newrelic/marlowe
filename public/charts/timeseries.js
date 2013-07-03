@@ -147,6 +147,21 @@ function timeseriesInit(div, legendPlots) {
 	timeseriesUpdateLines(div);
     });
 
+    var timeline = 
+	chart.append("g");
+
+    timeline
+	.append("line")
+        .attr("y1", 0).attr("y2", $data.height)
+        .attr("x1", 0).attr("x2", 0)
+        .attr("id", "time-marker");
+        
+    $data.dispatch.on("tick.timeseries", function(t) {
+        var d = new Date(t);
+        var pos = x(t);
+        timeline.attr("transform", "translate("+x(t)+", 0)");
+    });
+
     $data.dispatch.on("newTimesliceData.timeseries", function() {
 	timeseriesUpdate(div);
 	d3.select("img.timeseries.busy").style("display", "none");

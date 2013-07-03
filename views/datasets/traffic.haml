@@ -1,0 +1,128 @@
+- content_for(:head) do
+  %script{type: 'text/javascript', src: "/charts/timeseries.js"}
+  %script{type: 'text/javascript', src: "/charts/traffic.js"}
+  :css
+    #logTransformGroup, #apdexTGroup {
+      display: none;
+    }
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+    .axis text {
+      font: 13px sans-serif;
+     }
+    .series {
+      fill: none;
+      stroke-width: 2.5px;
+    }
+    .clickrect {
+      fill: #F6F6F6;
+      stroke: #999;
+      stroke-width: 2px;
+    }
+    .legend { 
+      font-size: 12px;
+    }
+    rect.legenditem { 
+       fill: #FFD;
+       stroke: black;
+       stroke-width: 1px;
+    }
+    .legenditem line {
+    }
+    #summary-values {
+
+    }
+    div.summary-row {
+      display: table-row;
+      position: relative;
+      float: none;
+    }
+    div.summary-item {
+      border: solid 2px #666;
+      display: inline;
+      position: relative;
+      float: left;
+      margin: 6px;
+      padding: 8px;
+      width: 160px;
+    }       
+    .summary-item div {
+      text-align: center;
+      font-size: 14px;
+    }
+    .summary-item span.value {
+      font-size: 24px;
+      text-align: center;
+    }
+    .summary-item span.units {
+      font-size: 18px;
+      text-align: center;
+    }
+    .summary-item div.bg {
+      position: absolute;
+      float: left;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.2;
+    }
+    div.outliers {
+      background: rgba(220,220,220,0.5);
+      padding: 6px;
+      font-size: 16px;
+      border-width: 2px;
+      xleft: 750px;
+      xwidth: 120px;
+      xtop: -80px;
+    }
+    .chart-row-section {
+      position: relative;
+      clear: both;
+    }
+
+    #display svg {
+      border: 1px solid black; 
+      margin-bottom: 18px;
+    }
+    #time-marker {
+      stroke: #900;
+      stroke-width: 3px;
+      stroke-dasharray: 5, 2;
+    }
+
+  :javascript
+    $data.file = "#{@file}";
+    $data.width = 800;
+    $data.height = 200;
+    $data.yMax = #{@y_max};
+    $data.density = #{@density};
+    $data.apdex_t = #{@apdex_t};
+    $data.value_index = 3;
+    $data.filter = "#{@filter_label}";
+    $data.only = "#{@only ? '1' : '0'}";
+
+.row
+  #display.span12
+    %p#readout
+.row
+  #timeseries.span12
+
+:javascript
+  initTraffic(d3.select("#display"));
+  $data.dispatch.on("reloadData.traffic", function(switchedFile)  {
+       d3.json("/data/raw/"+$data.file + "?" +
+        "only=" + $data.only + "&" +
+        "filter=" + $data.filter, function(error, json) {
+         updateTraffic(error, json, d3.select("#display"));
+       });
+  });
+
+  // This defines the attributes of the timeslice record that are in the legend of the plot.
+  var plots = ["mean", "mode", "median", "apdex", "rpm"];
+  timeseriesInit(d3.select("#timeseries"), plots);
+  $data.dispatch.reloadData();

@@ -22,6 +22,7 @@ $data.dispatch = d3.dispatch("newTreemapData",    // new treemap data loaded
 			     "newTimesliceData",  // new timeslice data loaded 
 			     "newHorizonData",  // new timeslice data loaded 
 			     "timerangeSelect",   // new timerange selection
+			     "tick",              // advance an animation on the timeline, arg is time object
 			     "reloadData",        // settings changed, go get new data
 			     "bucketSelect",      // new value range selected
 			     "plotSelect");       // selected or deselected a plot line
@@ -174,4 +175,3 @@ function loadTimesliceData(switchedFile) {
 $data.dispatch.on("reloadData.index", loadTimesliceData);
 $data.dispatch.on("timerangeSelect.index", showSelection);
 $data.dispatch.on("bucketSelect.index", showSelection);
-
