@@ -127,7 +127,6 @@
       var val = slider.value;
       d3.select("input#y_max").node().value = val;
       $data.yMax = val;
-      $data.dispatch.newTimesliceData();
       if (slider.sliderTimer) {
         clearTimeout(slider.sliderTimer);
       }
