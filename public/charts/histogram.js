@@ -104,7 +104,7 @@ function histogramInit(div) {
 	.attr("class", "outliers")
         .style("position", "relative")
         .style("width", "100px")
-        .style("bottom", "80px")
+        .style("bottom", "120px")
         .style("left", $data.width + "px");
 
     $data.dispatch.on("plotSelect.histogram", function(name) {
