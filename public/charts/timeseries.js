@@ -285,6 +285,13 @@ function timeseries(div) {
 			 "mid": timeslice.g_mean,
 			 "style": "geometric"}
 	    });
+	else if ($data.selectedQuartile == "actual") 
+	    data = $data.timeslices.map(function(timeslice) {
+		return { "y0": timeslice.pct_75,
+			 "y1": timeslice.pct_25,
+			 "mid": timeslice.median,
+			 "style": "actual"}
+	    });
 	else data = []
 	quartilesPlot.selectAll("rect").data(data).call(boxplot);
 	return svg;

@@ -83,6 +83,7 @@ function histogramInit(div) {
     var legend = chart.append("g").selectAll("g").data([{ "label": "apdex S", "class": "apdex_s"},
                                                         { "label": "apdex T", "class": "apdex_t"}, 
                                                         { "label": "apdex F", "class": "apdex_f"},
+                                                        { "label": "actual quartile", "class": "actual" },
                                                         { "label": "geom. quartile", "class": "geometric" },
                                                         { "label": "arith. quartile", "class": "arithmetic" }])
 	.enter()
@@ -184,17 +185,22 @@ function histogramUpdateLines(div) {
 	    } else if ($data.selectedQuartile == "geometric") {
 		lowerQuartile = timeslice.g_mean / Math.pow(timeslice.g_stddev, z75);
 		upperQuartile = timeslice.g_mean * Math.pow(timeslice.g_stddev, z75);
+	    } else if ($data.selectedQuartile == "actual") {
+		lowerQuartile = timeslice.pct_25;
+		upperQuartile = timeslice.pct_75;
 	    }
-            var value = x.invert(bars(i));
+//            var lowerBound = x.invert(bars(i));
+            var lowerBound = x.invert(bars(i));
+            var upperBound = x.invert(bars(i+1));
             if ($data.selectedQuartile) {
-	       if (value >= lowerQuartile && value <= upperQuartile)
+	       if (upperBound >= lowerQuartile && lowerBound <= upperQuartile)
 		   return $data.selectedQuartile;
                else
 		   return "bar apdex_s";
             }
-            else if ($data.displayedPlots.indexOf("apdex") == -1 || value < $data.apdex_t) 
+            else if ($data.displayedPlots.indexOf("apdex") == -1 || lowerBound < $data.apdex_t) 
                 return "bar apdex_s";
-            else if (x.invert(bars(i)) >= 4 * $data.apdex_t)
+            else if (upperBound >= 4 * $data.apdex_t)
                 return "bar apdex_f";
             else 
                 return "bar apdex_t";

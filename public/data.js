@@ -60,7 +60,7 @@ $data.selectedTimeslice = -1;
 // -1 means entire timerange of data in scope, otherwise it's the bucket index into $data.timeslices[n].hist
 $data.selectedBucket = -1;
 
-// Selected quartile: arithmetic, geometric, or null
+// Selected quartile: arithmetic, geometric, actual or null
 $data.selectedQuartile = null;
 
 function togglePlotline(name) {

@@ -88,7 +88,8 @@ class Timeslice
       a_p85: arithmetic_interval(1.036), # p(0.15)
       a_p95: arithmetic_interval(1.645), # p(0.05)
       a_p99: arithmetic_interval(2.326), # p(0.01)
-      pct_85: percentile(0.85),  
+      pct_25: percentile(0.25),  
+      pct_75: percentile(0.75),  
       pct_95: percentile(0.95),  
       pct_99: percentile(0.99),  
       median: percentile(0.5),
