@@ -1,92 +1,235 @@
 .mean {
-	stroke: #8E2;
-	background: #8E2
+    stroke: #8E2;
+    background: #8E2
 }
 .a_p85 {
-	stroke: #8E2 ;
-	background: #8E2;
-	stroke-dasharray: 20, 3;
+    stroke: #8E2 ;
+    background: #8E2;
+    stroke-dasharray: 20, 3;
 }
 .a_p95 {
-	stroke: #8E2 ;
-	background: #8E2;
-	stroke-dasharray: 10, 3;
+    stroke: #8E2 ;
+    background: #8E2;
+    stroke-dasharray: 10, 3;
 }
 .a_p99 {
-	stroke: #8E2 ;
-	background: #8E2;
-	stroke-dasharray: 5, 3;
+    stroke: #8E2 ;
+    background: #8E2;
+    stroke-dasharray: 5, 3;
 }
 .g_mean {
-	stroke: #0a9 ;
-	background: #0a9
+    stroke: #0a9 ;
+    background: #0a9
 }
 .g_p85 {
-	stroke: #0a9 ;
-	background: #0a9;
-	stroke-dasharray: 20, 3;
+    stroke: #0a9 ;
+    background: #0a9;
+    stroke-dasharray: 20, 3;
 }
 .g_p95 {
-	stroke: #0a9 ;
-	background: #0a9;
-	stroke-dasharray: 10, 3;
+    stroke: #0a9 ;
+    background: #0a9;
+    stroke-dasharray: 10, 3;
 }
 .g_p99 {
-	stroke: #0a9 ;
-	background: #0a9;
-	stroke-dasharray: 5, 3;
+    stroke: #0a9 ;
+    background: #0a9;
+    stroke-dasharray: 5, 3;
 }
 .max {
-	stroke: black ;
-	background: black
+    stroke: black ;
+    background: black
 }
 .min {
-	stroke: black ;
-	background: black
+    stroke: black ;
+    background: black
 }
 .pct_85 {
-	stroke: #F66 ;
-	background: #F66;
-	stroke-dasharray: 20, 5;
+    stroke: #F66 ;
+    background: #F66;
+    stroke-dasharray: 20, 5;
 }
 .pct_95 {
-	stroke: #900 ;
-	background: #900;
-	stroke-dasharray: 10, 5;
+    stroke: #900 ;
+    background: #900;
+    stroke-dasharray: 10, 5;
 }
 .pct_99 {
-	stroke: #600 ;
-	background: #600;
-	stroke-dasharray: 5, 5;
+    stroke: #600 ;
+    background: #600;
+    stroke-dasharray: 5, 5;
 }
 .median {
-	stroke: #F00 ;
-	background: #F00
+    stroke: #F00 ;
+    background: #F00
 }
 .mode {
-	stroke: #060 ;
-	background: #060
+    stroke: #060 ;
+    background: #060
 }
 .rpm {
-	stroke: #333;
-	background: #F0F;
-	stroke-dasharray: 8, 3;
-	stroke-width: 1px;
+    stroke: #333;
+    background: #F0F;
+    stroke-dasharray: 8, 3;
+    stroke-width: 1px;
 }
 .apdex {
-	stroke: #33C ;
-	background: #33C
+    stroke: #33C ;
+    background: #33C
 }
 
 .apdex_s {
-	fill: #FDCC8A;
-	stroke: #FDCC8A;
+    fill: #FDCC8A;
+    stroke: #FDCC8A;
 }
 .apdex_t {
-	fill: #E34A33;
-	stroke: #E34A33;
+    fill: #E34A33;
+    stroke: #E34A33;
 }
 .apdex_f {
-	fill: #333;
-	stroke: #333;
+    fill: #333;
+    stroke: #333;
+}
+.geometric {
+    fill: #8E2;
+    stroke: #8E2 ;
+}
+.arithmetic {
+    fill: #0a9;
+    stroke: #0a9 ;
+}
+
+.quartiles rect {
+    opacity: 0.8;
+    stroke-width: 1px;
+}
+
+/*
+ * timeseries 
+ */
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+.axis text {
+    font: 13px sans-serif;
+}
+.series {
+    fill: none;
+    stroke-width: 2.5px;
+}
+.clickrect {
+    fill: #F6F6F6;
+    stroke: #999;
+    stroke-width: 2px;
+}
+.legend { 
+    font-size: 12px;
+}
+rect.legenditem { 
+    fill: #FFD;
+    stroke: black;
+    stroke-width: 1px;
+}
+.legenditem line {
+}
+
+/*
+ * summary values (summary_numbers.js)
+ */
+
+div.summary-row {
+    display: table-row;
+    position: relative;
+    float: none;
+}
+div.summary-item {
+    border: solid 2px #666;
+    display: inline;
+    position: relative;
+    float: left;
+    margin: 6px;
+    padding: 8px;
+    width: 120px;
+}       
+.summary-item div {
+    text-align: center;
+}
+.summary-item span.value {
+    font-size: 28px;
+    text-align: center;
+}
+.summary-item span.units {
+    font-size: 18px;
+    text-align: center;
+}
+
+.summary-item div.bg {
+    position: absolute;
+    float: left;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.2;
+}
+
+/*
+ * histogram
+ */
+
+div.outliers {
+    position: absolute;
+    background: rgba(220,220,220,0.5);
+    padding: 6px;
+    font-size: 16px;
+    border-width: 2px;
+}
+
+/*
+ * Treemap 
+ */
+#treemap-sect .node {
+    border: solid 1px white;
+    font: 10px sans-serif;
+    line-height: 12px;
+    overflow: hidden;
+    position: absolute;
+    text-indent: 2px;
+}
+#treemap-sect p.range {
+    font-size: 1.4em;
+}
+
+/*
+ * Horizon plot
+ */
+
+#horizon-controls {
+    width: 940px;
+    padding: 10px;
+    z-index: 1;
+}
+#horizon-controls.form-inline {
+    margin-bottom: 24px;
+}
+#horizon_controls .checkbox {
+    margin-left: 24px;
+}
+.sparkline .name {
+    text-align: right;
+}
+/*
+ * Traffic animation
+ */
+#display svg {
+    border: 1px solid black; 
+    margin-bottom: 18px;
+}
+#time-marker {
+    stroke: #900;
+    stroke-width: 3px;
+    stroke-dasharray: 5, 2;
 }
