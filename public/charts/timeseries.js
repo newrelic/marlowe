@@ -257,18 +257,34 @@ function timeseries(div) {
 	    var numCols = Math.floor($data.density * ($data.width / $data.height)),
    	    colWidth = $data.width / (numCols - 1 );
 
-	    v.enter()
-		.append("rect")
-
 	    v
+                .attr("class", $data.selectedQuartile)
+		.transition()
 		.attr("transform", function(d, i) {
 		    return "translate(" + (( i - 0.5) * colWidth) + ","+y(d.y0)+")";
 		})
+		.attr("height", function(d) { return y(d.y1) - y(d.y0) });
+
+	    v.enter()
+		.append("rect")
 		.attr("class", $data.selectedQuartile)
 		.attr("width", colWidth - 1)
-		.attr("height", function(d) { return y(d.y1) - y(d.y0) })
+		.attr("transform", function(d, i) {
+		    return "translate(" + (( i - 0.5) * colWidth) + ","+y(d.mid)+")";
+		})
+	        .attr("height", 0)
+	        .transition()
+		.attr("transform", function(d, i) {
+		    return "translate(" + (( i - 0.5) * colWidth) + ","+y(d.y0)+")";
+		})
+		.attr("height", function(d) { return y(d.y1) - y(d.y0) });
 
 	    v.exit()
+	        .transition()
+		.attr("transform", function(d, i) {
+		    return "translate(" + (( i - 0.5) * colWidth) + ","+y(d.mid)+")";
+		})
+	        .attr("height", 0)
 		.remove();
 	}
 	if ($data.selectedQuartile == "arithmetic")
