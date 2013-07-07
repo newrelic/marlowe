@@ -21,10 +21,17 @@
         %a.brand{href:"http://github.com/newrelic/marlowe"} Marlowe
         .nav-collapse.collapse
           %ul.nav
-            %li{class: (params[:view] == "threeway" ? 'active' : nil)}
-              %a{href:"/datasets/threeway.html"} Treemap
-            %li{class: (params[:view] == "summaryplots" ? 'active' : nil)}
-              %a{href:"/datasets/summaryplots.html"} Summary Plots
+            %li.dropdown
+              %a.dropdown-toggle{:href=>"#", :'data-toggle' => "dropdown"}
+                Summary Plots
+                %b.caret
+              %ul.dropdown-menu
+                %li
+                  %a{href:"/datasets/summaryplots.html"} Histogram Demo
+                %li
+                  %a{href:"/datasets/threeway.html"} Treemap Demo
+                %li
+                  %a{href:"/datasets/quartiles.html"} Quartiles Demo
             %li{class: (params[:view] == "horizon" ? 'active' : nil)}
               %a{href:"/datasets/horizon.html"} Horizon Plots
             %li{class: (params[:view] == "traffic" ? 'active' : nil)}

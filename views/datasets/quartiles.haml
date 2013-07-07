@@ -1,0 +1,64 @@
+- content_for(:head) do
+  %script{type: 'text/javascript', src: "/charts/timeseries.js"}
+  %script{type: 'text/javascript', src: "/charts/histogram.js"}
+  %script{type: 'text/javascript', src: "/charts/summary_numbers.js"}
+  :javascript
+    $data.file = "#{@file}";
+    $data.yMax = #{@y_max};
+    $data.logTransform = #{@log_transform};
+    $data.density = #{@density};
+    $data.apdex_t = #{@apdex_t};
+    $data.value_index = #{@value_index};
+    $data.filter = "#{@filter_label}";
+    $data.only = "#{@only ? '1' : '0'}";
+    $data.width = 800;
+    $data.height = 300;
+
+.row
+  #timeseries-sect.span12
+    %h1 
+      Timeseries Plots
+      %img.timeseries.busy{src:'/images/busy.gif', style: 'display:none'}
+    %p 
+      Click on any item in the legend to toggle its display
+    %p
+      .radio.inline Show estimated quartile region using: 
+      %label.radio.inline
+        %input#enduser{type: 'radio', name: 'quartile', value: "arithmetic", onchange: 'selectQuartile(this);'}
+        arithmetic values
+      %label.radio.inline
+        %input#appserver{type: 'radio', name: 'quartile', value: "geometric", onchange: 'selectQuartile(this);'}
+        geometric values
+      %label.radio.inline
+        %input#appserver{type: 'radio', name: 'quartile', value: "actual", onchange: 'selectQuartile(this);'}
+        actual percentiles
+      %label.radio.inline
+        %input#appserver{type: 'radio', name: 'quartile', value: "", checked: true, onchange: 'selectQuartile(this);'}
+        none
+    #timeseries
+.row
+  .span12
+    %h1 
+      Response Time Distribution
+      %img.histogram.busy{src:'/images/busy.gif', style: 'display:none'}
+    %p
+      Show a histogram with summary bars at the different statistical aggregates: mean, median, 95 percentile, etc
+    #histogram
+
+.row
+  .span12
+    %h1
+      %span#range All Data
+      %button#reset{style: 'display: none', onClick: 'resetSelection();'}
+        RESET
+    #summary-values-sect
+
+:javascript
+  // This defines the attributes of the timeslice record that are in the legend of the plot.
+  var plots = ["mean", "mode", "median", "apdex", "rpm"];
+  timeseries(d3.select("#timeseries"))
+    .legend(plots);
+
+  histogramInit(d3.select("div#histogram"));
+  summaryInit(d3.select("div#summary-values-sect"));
+  $data.dispatch.reloadData();
