@@ -38,16 +38,18 @@
           .control-group#yMaxGroup
             %label.control-label y max
             .controls
-              %input{id: 'y_max', type: 'text', size: 6, name: 'y_max' }
+              %input#y_max{type: 'text', size: 6, name: 'y_max' }
+              %input.slider{type:'range', min: 3000, step: 100, max: 20000, onchange: "updateYMax(this)"}
           .control-group#densityGroup
             %label.control-label plot density
             .controls
-              %input{id: 'density', type: 'text', size: 6, name: 'density' }
+              %input#density{type: 'text', size: 6, name: 'density' }
+              %input.slider{type:'range', min: 8, step: 2, max: 140, onchange: "updateDensity(this)"}
           .control-group#apdexTGroup
             %label.control-label apdex T
             .controls
               %input#apdex_t{type: 'text', size: 6, name: 'apdex_t' }
-              %input#slider{type:'range', min: 100, step: 100, max: 5100, onchange: "updateApdex()"}
+              %input.slider{type:'range', min: 100, step: 100, max: 5100, onchange: "updateApdex(this)"}
           .control-group#logTransformGroup
             .controls
               %label.inline.checkbox
@@ -96,19 +98,38 @@
 
   :javascript
 
-    d3.select("input#y_max").attr("value", $data.yMax);
-    d3.select("input#density").attr("value", $data.density);
-    d3.select("input#apdex_t").attr("value", $data.apdex_t);
+    d3.selectAll("#yMaxGroup input").attr("value", $data.yMax);
+    d3.selectAll("#densityGroup input").attr("value", $data.density);
+    d3.selectAll("#apdexTGroup input").attr("value", $data.apdex_t);
     d3.select("input#slider").attr("value", $data.apdex_t);
     d3.select("input#log_transform").attr("checked", $data.logTransform ? true : null);
-    var sliderTimer;
-    function updateApdex() {
-      var val = d3.select("#slider").node().value;
-      d3.select("#apdex_t").node().value = val;
+    function updateApdex(slider) {
+      var val = slider.value;
+      d3.select("input#apdex_t").node().value = val;
       $data.apdex_t = val;
       $data.dispatch.newTimesliceData();
-      if (sliderTimer) {
-        clearTimeout(sliderTimer);
+      if (slider.sliderTimer) {
+        clearTimeout(slider.sliderTimer);
       }
-      sliderTimer = setTimeout(refreshData, 500);
+      slider.sliderTimer = setTimeout(refreshData, 500);
+    }
+    function updateDensity(slider) {
+      var val = slider.value;
+      d3.select("input#density").node().value = val;
+      $data.density = val;
+      $data.dispatch.newTimesliceData();
+      if (slider.sliderTimer) {
+        clearTimeout(slider.sliderTimer);
+      }
+      slider.sliderTimer = setTimeout(refreshData, 500);
+    }
+    function updateYMax(slider) {
+      var val = slider.value;
+      d3.select("input#y_max").node().value = val;
+      $data.yMax = val;
+      $data.dispatch.newTimesliceData();
+      if (slider.sliderTimer) {
+        clearTimeout(slider.sliderTimer);
+      }
+      slider.sliderTimer = setTimeout(refreshData, 500);
     }
