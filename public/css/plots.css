@@ -181,18 +181,6 @@ div.summary-item {
 }
 
 /*
- * histogram
- */
-
-div.outliers {
-    position: absolute;
-    background: rgba(220,220,220,0.5);
-    padding: 6px;
-    font-size: 16px;
-    border-width: 2px;
-}
-
-/*
  * Treemap 
  */
 #treemap-sect .node {

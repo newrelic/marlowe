@@ -40,7 +40,7 @@ function histogramUpdate(div, bucket) {
     bar.exit().remove();
     histogramUpdateLines(div, bucket);
     // Update the outliers text
-    div.select("div.outliers")
+    div.select("span.outliers")
 	.text(Math.round(1000 * bucket.outliers.count / bucket.count)/10.0 + "% > "+ $data.yMax);
 }
 
@@ -101,11 +101,13 @@ function histogramInit(div) {
 
     // outlier text box
     div.append("div")
-	.attr("class", "outliers")
         .style("position", "relative")
-        .style("width", "100px")
         .style("bottom", "120px")
-        .style("left", $data.width + "px");
+        .style("left", $data.width + "px")
+	.append("span")
+	.style("font-size", "18px")
+	.style("padding", "8px")
+	.attr("class", "outliers label");
 
     $data.dispatch.on("plotSelect.histogram", function(name) {
 	histogramUpdateLines(div);
