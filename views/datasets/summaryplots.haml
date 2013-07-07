@@ -58,5 +58,14 @@
     .legend(plots);
 
   histogramInit(d3.select("div#histogram"));
-  summaryInit(d3.select("div#summary-values-sect"));
+
+  var s = summary(d3.select("div#summary-values-sect"));
+  s.row()
+      .column("Throughput", "rpm", "rpm")
+      .column("50 % (Median)", "median", "ms")
+      .column("Mean", "mean", "ms")
+      .column("Mode", "mode", "ms")
+      .column("Apdex","apdex", "");
+  s.init();
+
   $data.dispatch.reloadData();
