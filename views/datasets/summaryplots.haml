@@ -15,13 +15,13 @@
     $data.height = 300;
 
 .row
-  #timeseries-sect.span12
-    %h1 
-      Timeseries Plots
-      %img.timeseries.busy{src:'/images/busy.gif', style: 'display:none'}
-    %p 
-      Click on any item in the legend to toggle its display
-    %p
+  .span12
+    %h3
+      %span#range Range: All
+      %button#reset{style: 'display: none', onClick: 'resetSelection();'}
+        RESET
+    #summary-values-sect
+    %div
       .radio.inline Show quartile region: 
       %label.radio.inline
         %input#enduser{type: 'radio', name: 'quartile', value: "arithmetic", onchange: 'selectQuartile(this);'}
@@ -30,26 +30,30 @@
         %input#appserver{type: 'radio', name: 'quartile', value: "geometric", onchange: 'selectQuartile(this);'}
         geometric
       %label.radio.inline
+        %input#appserver{type: 'radio', name: 'quartile', value: "actual", onchange: 'selectQuartile(this);'}
+        actual
+      %label.radio.inline
         %input#appserver{type: 'radio', name: 'quartile', value: "", checked: true, onchange: 'selectQuartile(this);'}
         none
+
+.row
+  #timeseries-sect.span12
+    %h3 
+      Timeseries Plots
+      %img.timeseries.busy{src:'/images/busy.gif', style: 'display:none'}
+    %p
+      %label.inline.checkbox
+        %input{type: 'checkbox', name: 'heatmap', onchange: 'timeseries.heatmap(this.checked);' }
+        Show heatmap
       
     #timeseries
 .row
   .span12
-    %h1 
-      Response Time Distribution
+    %h3 
+      Histogram
       %img.histogram.busy{src:'/images/busy.gif', style: 'display:none'}
-    %p
-      Show a histogram with summary bars at the different statistical aggregates: mean, median, 95 percentile, etc
     #histogram
 
-.row
-  .span12
-    %h1
-      %span#range All Data
-      %button#reset{style: 'display: none', onClick: 'resetSelection();'}
-        RESET
-    #summary-values-sect
 
 :javascript
   // This defines the attributes of the timeslice record that are in the legend of the plot.

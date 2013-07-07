@@ -29,7 +29,7 @@
 
 .row
   .span12
-    %h2
+    %h3
       %span#range
         All Data
       %button#reset{style: 'display: none', onClick: 'resetSelection();'}
@@ -47,17 +47,15 @@
         none
 .row
   .span6
-    %h1 
-      Timeseries Plots
+    %h3 
+      Timeseries
       %img.timeseries.busy{src:'/images/busy.gif', style: 'display:none'}
     %p 
       Click on any item in the legend to toggle its display
   .span6
-    %h1 
-      Response Time Distribution
+    %h3 
+      Histogram
       %img.histogram.busy{src:'/images/busy.gif', style: 'display:none'}
-    %p
-      Show a histogram with summary bars at the different statistical aggregates: mean, median, 95 percentile, etc
 .row
   #timeseries-sect.span6
     .timeseries
@@ -66,8 +64,8 @@
 
 .row
   .span12
-    %h1 
-      Transaction Breakdown
+    %h3 
+      Treemap Breakdown
       %img.treemap.busy{src:'/images/busy.gif', style: 'display:none'}
     %p
       Click Scatterplot or Histogram to map activity for a single column.

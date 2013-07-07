@@ -13,10 +13,14 @@
     $data.only = "#{@only ? '1' : '0'}";
     $data.width = 800;
     $data.height = 300;
+  :css
+    #logTransformGroup, #apdexTGroup {
+      display: none;
+    }
 
 .row
   #timeseries-sect.span12
-    %h1 
+    %h3
       Timeseries Plots
       %img.timeseries.busy{src:'/images/busy.gif', style: 'display:none'}
     %p 
@@ -38,7 +42,7 @@
     #timeseries
 .row
   .span12
-    %h1 
+    %h3 
       Response Time Distribution
       %img.histogram.busy{src:'/images/busy.gif', style: 'display:none'}
     %p
@@ -47,7 +51,7 @@
 
 .row
   .span12
-    %h1
+    %h3
       %span#range All Data
       %button#reset{style: 'display: none', onClick: 'resetSelection();'}
         RESET
