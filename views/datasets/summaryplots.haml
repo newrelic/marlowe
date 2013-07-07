@@ -53,9 +53,9 @@
 
 :javascript
   // This defines the attributes of the timeslice record that are in the legend of the plot.
-  var plots = ["mean", "mode", "median", "apdex", "rpm"];
-  timeseries(d3.select("#timeseries"))
-    .legend(plots);
+  
+  var timeseries = timeseries(d3.select("#timeseries"));
+  //  .legend(["mean", "mode", "median", "apdex", "rpm"]);
 
   histogramInit(d3.select("div#histogram"));
 

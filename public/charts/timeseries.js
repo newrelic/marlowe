@@ -3,7 +3,7 @@ function timeseries(div) {
     var svg = div.append("svg")
 	.attr("id", "timeseries")
         .attr("width", $data.width + $data.margin.left + $data.margin.right)
-        .attr("height", $data.height + $data.margin.top + $data.margin.bottom + 60);
+        .attr("height", $data.height + $data.margin.top + $data.margin.bottom);
 
     svg.append("defs").append("clipPath")
 	.attr("id", "plotclip")
@@ -20,29 +20,16 @@ function timeseries(div) {
     apdexScale = d3.scale.linear().rangeRound([$data.height, 0]).domain([0, 1]),
     colorScale = d3.interpolateRgb("#ffe", "#333"),
     throughputScale = d3.scale.linear().range([$data.height, 50]),
-    legendPlots = [],
-    showHeatmap  = false;
+    legendPlots = [];
 
     var apdex = apdexScale;
     var x = xScale;
     var y = yScale;
-    
+    var showHeatmap = false;    
     var apdexAxis = d3.svg.axis()
         .scale(apdex)
         .orient("right");
     var chart = svg.select("g");
-
-    function toggleHeatmap() {
-        d3.select("img.timeseries.busy").style("display", "inline");
-        showHeatmap = !showHeatmap;
-        var rect = svg.select("#heatmap-sample")
-        if (showHeatmap)
-            rect.transition().duration(250).style("opacity", 1);
-        else
-            rect.transition().duration(250).style("opacity", 0.2);
-        svg.update();
-        d3.select("img.timeseries.busy").style("display", "none");
-    }
 
     chart
 	.append("g").attr("class", "heatmap")
@@ -79,7 +66,7 @@ function timeseries(div) {
         .attr("class", "plots");
 
     $data.dispatch.on("plotSelect.timeseries", function(name) {
-	svg.updateLines();
+	updateLines();
     });
 
     $data.dispatch.on("newTimesliceData.timeseries", function() {
@@ -88,6 +75,7 @@ function timeseries(div) {
     });
 
     svg.legend = function(legendNames) {
+        svg.attr("height", $data.height + $data.margin.top + $data.margin.bottom + 60);
 	legendPlots = legendNames;
 	var legendItemWidth = Math.floor($data.width / (legendPlots.length + 1)),
 	legendItemHeight = 42,
@@ -111,7 +99,7 @@ function timeseries(div) {
             .attr("width", legendItemWidth)
             .attr("height", legendItemHeight)
             .on("click", function(d) {
-		toggleHeatmap(chart);
+		heatmap(!showHeatmap);
             });
 
 	g.append("text")
@@ -119,7 +107,7 @@ function timeseries(div) {
             .attr("class", "legend")
             .text("heatmap")
             .on("click", function(d) {
-		toggleHeatmap(chart);
+		heatmap(!showHeatmap);
             });
 
 	g.append("rect")
@@ -185,7 +173,7 @@ function timeseries(div) {
         return svg;
     };
 
-    svg.updateLines = function() {
+    updateLines = function() {
 	var apdex = apdexScale;
 	x.domain(d3.extent($data.timeslices, function(d) { return d.time; }));
 	svg.select("g.legend").selectAll("g.timeseries").data(legendPlots, String).select("line")
@@ -313,6 +301,18 @@ function timeseries(div) {
 	return svg;
     };
 
+    svg.heatmap = function(enable) {
+        d3.select("img.timeseries.busy").style("display", "inline");
+        var rect = svg.select("#heatmap-sample");
+	showHeatmap = enable;
+        if (showHeatmap)
+            rect.transition().duration(250).style("opacity", 1);
+        else
+            rect.transition().duration(250).style("opacity", 0.2);
+        svg.update();
+        d3.select("img.timeseries.busy").style("display", "none");
+    }
+
     svg.update = function() {
 	y.domain([0, $data.yMax]);
 	x.domain(d3.extent($data.timeslices, function(d) { return d.time; }));
@@ -381,7 +381,7 @@ function timeseries(div) {
 	rect.enter()
             .append("rect")
             .attr("class", "cell")
-            .attr("x", 0)
+            .attr("x", 0);
 	rect
             .attr("width", Math.round(cellWidth))
             .attr("height", Math.round(cellHeight))
@@ -397,7 +397,7 @@ function timeseries(div) {
             .style("opacity", 0)
             .remove();
 
-	svg.updateLines();
+	updateLines();
 	return svg;
     };
     return svg;
