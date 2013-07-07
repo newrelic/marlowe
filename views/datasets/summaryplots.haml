@@ -21,6 +21,18 @@
       %img.timeseries.busy{src:'/images/busy.gif', style: 'display:none'}
     %p 
       Click on any item in the legend to toggle its display
+    %p
+      .radio.inline Show quartile region: 
+      %label.radio.inline
+        %input#enduser{type: 'radio', name: 'quartile', value: "arithmetic", onchange: 'selectQuartile(this);'}
+        arithmetic
+      %label.radio.inline
+        %input#appserver{type: 'radio', name: 'quartile', value: "geometric", onchange: 'selectQuartile(this);'}
+        geometric
+      %label.radio.inline
+        %input#appserver{type: 'radio', name: 'quartile', value: "", checked: true, onchange: 'selectQuartile(this);'}
+        none
+      
     #timeseries
 .row
   .span12
@@ -42,7 +54,9 @@
 :javascript
   // This defines the attributes of the timeslice record that are in the legend of the plot.
   var plots = ["mean", "mode", "median", "apdex", "rpm"];
-  timeseriesInit(d3.select("#timeseries"), plots);
+  timeseries(d3.select("#timeseries"))
+    .legend(plots);
+
   histogramInit(d3.select("div#histogram"));
   summaryInit(d3.select("div#summary-values-sect"));
   $data.dispatch.reloadData();

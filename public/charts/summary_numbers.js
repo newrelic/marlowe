@@ -7,7 +7,7 @@ var summaryItems = [
 	["99 %", "pct_99", "ms"]],
     [
 	["Arithmetic Mean", "mean", "ms"],
-	["Arithmetic Std Dev", "std_dev", "ms"],
+	["Arithmetic Std Dev", "stddev", "ms"],
 	["Arithmetic p 85 %", "a_p85", "ms"],
 	["Arithmetic p 95 %", "a_p95", "ms"],
 	["Arithmetic p 99 %", "a_p99", "ms"]],

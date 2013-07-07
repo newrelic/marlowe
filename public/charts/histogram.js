@@ -49,7 +49,7 @@ function histogramInit(div) {
     var svg = div.append("svg")
          .attr("id", "histogram")
          .attr("width", $data.width + $data.margin.left + $data.margin.right)
-         .attr("height", $data.height + $data.margin.top + $data.margin.bottom);
+         .attr("height", $data.height + $data.margin.top + $data.margin.bottom + 30);
 
     svg.append("g")
          .attr("transform", "translate(" + $data.margin.left + ","+ $data.margin.top + ")");
@@ -80,20 +80,23 @@ function histogramInit(div) {
         .attr("class", "plots");
 
     // These should be divs probably.
-    var legend = chart.append("g").selectAll("g").data(["apdex_s", "apdex_t", "apdex_f"]).enter()
+    var legend = chart.append("g").selectAll("g").data([{ "label": "apdex S", "class": "apdex_s"},
+                                                        { "label": "apdex T", "class": "apdex_t"}, 
+                                                        { "label": "apdex F", "class": "apdex_f"},
+                                                        { "label": "geom. quartile", "class": "geometric" },
+                                                        { "label": "arith. quartile", "class": "arithmetic" }])
+	.enter()
         .append("g").attr("transform", function(d,i) { 
             return "translate("+(i*120)+","+(30 + $data.margin.top + $data.height)+")" 
         });
 
     legend.append("text")
-        .text(String);
-    legend.append("line")
-        .attr("y1", 10)
-        .attr("y2", 10)
-        .attr("x1", 0)
-        .attr("x2", 90)
-        .attr("stroke-width", 8)
-        .attr("class", String);
+        .text(function(v) { return v.label});
+    legend.append("rect")
+        .attr("y", 8)
+        .attr("width", 90)
+        .attr("height", 8)
+        .attr("class", function(v) { return v.class });
 
     // outlier text box
     div.append("div")
@@ -106,7 +109,9 @@ function histogramInit(div) {
     $data.dispatch.on("plotSelect.histogram", function(name) {
 	histogramUpdateLines(div);
     });
-
+    $data.dispatch.on("quartileSelect.histogram", function(name) {
+	histogramUpdateLines(div);
+    })
     $data.dispatch.on("timerangeSelect.histogram", function() {
 	var col;
 	if ($data.selectedTimeslice == -1)
@@ -121,6 +126,7 @@ function histogramInit(div) {
 	histogramUpdate(div, $data.summaryTimeslice);
 	d3.select("img.histogram.busy").style("display", "none");
     });
+
 };
 
 function histogramUpdateLines(div) {
@@ -170,8 +176,23 @@ function histogramUpdateLines(div) {
 
     svg.select("g.bars").selectAll("rect")
         .attr("class", function(d, i) { 
+	    var upperQuartile, lowerQuartile;
+	    var timeslice = $data.selectedTimeslice == -1 ? $data.summaryTimeslice : $data.timeslices[$data.selectedTimeslice];
+	    if ($data.selectedQuartile == "arithmetic") {
+		lowerQuartile = timeslice.mean - ( z75 * timeslice.stddev );
+		upperQuartile = timeslice.mean + ( z75 * timeslice.stddev );
+	    } else if ($data.selectedQuartile == "geometric") {
+		lowerQuartile = timeslice.g_mean / Math.pow(timeslice.g_stddev, z75);
+		upperQuartile = timeslice.g_mean * Math.pow(timeslice.g_stddev, z75);
+	    }
             var value = x.invert(bars(i));
-            if ($data.displayedPlots.indexOf("apdex") == -1 || value < $data.apdex_t) 
+            if ($data.selectedQuartile) {
+	       if (value >= lowerQuartile && value <= upperQuartile)
+		   return $data.selectedQuartile;
+               else
+		   return "bar apdex_s";
+            }
+            else if ($data.displayedPlots.indexOf("apdex") == -1 || value < $data.apdex_t) 
                 return "bar apdex_s";
             else if (x.invert(bars(i)) >= 4 * $data.apdex_t)
                 return "bar apdex_f";

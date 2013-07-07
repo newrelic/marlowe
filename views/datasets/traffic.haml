@@ -36,5 +36,8 @@
 
   // This defines the attributes of the timeslice record that are in the legend of the plot.
   var plots = ["mean", "mode", "median", "apdex", "rpm"];
-  timeseriesInit(d3.select("#timeseries"), plots);
+  timeseries(d3.select("#timeseries"))
+    .legend(plots)
+    .timeline();
+  
   $data.dispatch.reloadData();

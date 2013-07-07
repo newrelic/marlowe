@@ -14,7 +14,7 @@ describe Timeslice do
 
   it "should calculate values" do
     @timeslice.record[:mean].should == 1522
-    @timeslice.record[:std_dev].to_i.should == 868
+    @timeslice.record[:stddev].to_i.should == 868
     @timeslice.record[:g_mean].to_i.should == 1153
     @timeslice.record[:g_stddev].to_i.should == 730
     @timeslice.record[:median].should == 1500

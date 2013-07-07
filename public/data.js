@@ -25,6 +25,7 @@ $data.dispatch = d3.dispatch("newTreemapData",    // new treemap data loaded
 			     "tick",              // advance an animation on the timeline, arg is time object
 			     "reloadData",        // settings changed, go get new data
 			     "bucketSelect",      // new value range selected
+			     "quartileSelect",      // new value range selected
 			     "plotSelect");       // selected or deselected a plot line
 
 // The filter is a subset of values based on the label.  The filter can be "only" or "except"
@@ -50,14 +51,17 @@ $data.counts = []
 
 // The maximum count across all the buckets in each timeslice's histogram, used to normalize
 // the per-timeslice histogram display.
-$data.bucketMax = 0
+$data.bucketMax = 0;
 
 // -1 means summary data is the initial selection, otherwise this is the
 // index of data.timeslices
-$data.selectedTimeslice = -1
+$data.selectedTimeslice = -1;
 
 // -1 means entire timerange of data in scope, otherwise it's the bucket index into $data.timeslices[n].hist
-$data.selectedBucket = -1
+$data.selectedBucket = -1;
+
+// Selected quartile: arithmetic, geometric, or null
+$data.selectedQuartile = null;
 
 function togglePlotline(name) {
     var pos = $data.displayedPlots.indexOf(name);
@@ -176,7 +180,16 @@ function loadTimesliceData(switchedFile) {
     d3.select("input#only").attr("checked", $data.only == "1" ? 'true' : null);
     d3.select("input#except").attr("checked", $data.only == "0" ? 'true' : null);
 }
+function selectQuartile(button) {
+    $data.selectedQuartile = button.value;
+    $data.dispatch.quartileSelect(button.value);
+}
 
 $data.dispatch.on("reloadData.index", loadTimesliceData);
 $data.dispatch.on("timerangeSelect.index", showSelection);
 $data.dispatch.on("bucketSelect.index", showSelection);
+
+/*
+ * Z score for probability 75%.
+ */
+var z75 = 0.675 // z score for p - 0.75

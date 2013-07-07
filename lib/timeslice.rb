@@ -92,7 +92,7 @@ class Timeslice
       pct_95: percentile(0.95),  
       pct_99: percentile(0.99),  
       median: percentile(0.5),
-      std_dev: standard_deviation.to_i,
+      stddev: standard_deviation.to_i,
       apdex_t: @apdex_t,
       apdex_f: @apdex_f,
       apdex_s: @values.size - @apdex_t - @apdex_f,
@@ -186,6 +186,6 @@ class Timeslice
     count = @vec.size
     return 0 if count == 0
     index = count * ratio
-    @vec[index.floor]
+    @vec[index.floor].round
   end
 end
