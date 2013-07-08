@@ -96,7 +96,7 @@ function showSelection() {
     var desc = d3.select("#range");
     var resetLink = d3.select("#reset");
     if (info.length == 0) {
-        desc.text("All Data");
+        desc.text("");
         resetLink.style("display", "none");
     } else {
         desc.text("Range: "+info.join(", "));

@@ -11,14 +11,14 @@
     $data.value_index = #{@value_index};
     $data.filter = "#{@filter_label}";
     $data.only = "#{@only ? '1' : '0'}";
-    $data.width = 800;
-    $data.height = 300;
+    $data.width = 1000;
+    $data.height = 320;
 
 .row
   .span12
     #summary-values-sect
     %div
-      .radio.inline Show quartile region: 
+      .radio.inline Show middle quartiles: 
       %label.radio.inline
         %input#enduser{type: 'radio', name: 'quartile', value: "arithmetic", onchange: 'selectQuartile(this);'}
         arithmetic
@@ -33,6 +33,17 @@
         none
 
 .row
+  .span12
+    %h3 
+      Histogram     
+      %span#range
+      %button#reset{style: 'display: none', onClick: 'resetSelection();'}
+        RESET
+
+      %img.histogram.busy{src:'/images/busy.gif', style: 'display:none'}
+    #histogram
+
+.row
   #timeseries-sect.span12
     %h3 
       Timeseries Plots
@@ -43,16 +54,6 @@
         Show heatmap
       
     #timeseries
-.row
-  .span12
-    %h3 
-      Histogram     
-      %span#range
-      %button#reset{style: 'display: none', onClick: 'resetSelection();'}
-        RESET
-
-      %img.histogram.busy{src:'/images/busy.gif', style: 'display:none'}
-    #histogram
 
 
 :javascript
@@ -65,11 +66,10 @@
 
   var s = summary(d3.select("div#summary-values-sect"));
   s.row()
-      .column("Throughput", "rpm", "rpm")
       .column("50 % (Median)", "median", "ms")
       .column("Mean", "mean", "ms")
       .column("Mode", "mode", "ms")
-      .column("Apdex","apdex", "");
+      .column("Apdex","apdex", "score");
   s.init();
 
   $data.dispatch.reloadData();

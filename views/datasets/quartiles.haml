@@ -19,12 +19,14 @@
     }
 
 .row
+  .span12
+    #summary-values-sect
+
+.row
   #timeseries-sect.span12
     %h3
       Timeseries Plots
       %img.timeseries.busy{src:'/images/busy.gif', style: 'display:none'}
-    %p 
-      Click on any item in the legend to toggle its display
     %p
       .radio.inline Show estimated quartile region using: 
       %label.radio.inline
@@ -43,19 +45,13 @@
 .row
   .span12
     %h3 
-      Response Time Distribution
-      %img.histogram.busy{src:'/images/busy.gif', style: 'display:none'}
-    %p
-      Show a histogram with summary bars at the different statistical aggregates: mean, median, 95 percentile, etc
-    #histogram
-
-.row
-  .span12
-    %h3
-      %span#range All Data
+      Histogram
+      %span#range
       %button#reset{style: 'display: none', onClick: 'resetSelection();'}
         RESET
-    #summary-values-sect
+      %img.histogram.busy{src:'/images/busy.gif', style: 'display:none'}
+    #histogram
+
 
 :javascript
   // This defines the attributes of the timeslice record that are in the legend of the plot.
@@ -67,16 +63,19 @@
   var s = summary(d3.select("div#summary-values-sect"));
   s.row()
       .column("50 % (Median)", "median", "ms")
+      .column("75 %", "pct_75", "ms")
       .column("85 %", "pct_85", "ms")
       .column("95 %", "pct_95", "ms")
       .column("99 %", "pct_99", "ms");
   s.row()     
       .column("Arithmetic Mean", "mean", "ms")
+      .column("Arithmetic p 75 %", "a_p75", "ms")
       .column("Arithmetic p 85 %", "a_p85", "ms")
       .column("Arithmetic p 95 %", "a_p95", "ms")
       .column("Arithmetic p 99 %", "a_p99", "ms");
   s.row()
       .column("Geometric Mean", "g_mean", "ms")
+      .column("Geometric p 75 %", "g_p75", "ms")
       .column("Geometric p 85 %", "g_p85", "ms")
       .column("Geometric p 95 %", "g_p95", "ms")
       .column("Geometric p 99 %", "g_p99", "ms")
