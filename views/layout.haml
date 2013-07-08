@@ -57,11 +57,6 @@
             .controls
               %input#apdex_t{type: 'text', size: 6, name: 'apdex_t' }
               %input.slider{type:'range', min: 100, step: 100, max: 5100, onchange: "updateApdex(this)"}
-          .control-group#logTransformGroup
-            .controls
-              %label.inline.checkbox
-                %input#log_transform{type: 'checkbox', name: 'log_transform', onchange: 'refreshData();' }
-                transform to logspace
         .span4
           .control-group
             %label.control-label dataset
@@ -94,9 +89,12 @@
               %label.radio.inline
                 %input#except{type: 'radio', name: 'only', value: "0", onchange: 'refreshData();'}
                 except
-          .control-group
+
+          .control-group#logTransformGroup
             .controls
-              %button.btn{type: 'submit'} Submit
+              %label.inline.checkbox
+                %input#log_transform{type: 'checkbox', name: 'log_transform', onchange: 'refreshData();' }
+                transform to logspace
   .container
     = yield
 
