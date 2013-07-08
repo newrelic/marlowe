@@ -80,7 +80,9 @@
   timeseries(d3.select("#timeseries-sect > div.timeseries"))
     .legend(plots);
   
-  histogramInit(d3.select("#histogram-sect > div.histogram"));
+  histogram(d3.select("#histogram-sect > div.histogram"))
+    .enableBucketSelection();
+  
   treemapInit(d3.select("div#treemap-sect"));
   $data.dispatch.on("reloadData.treemap", loadTreemapData);
   $data.dispatch.reloadData();

@@ -352,7 +352,7 @@ function timeseries(div) {
 		$data.dispatch.timerangeSelect(col);
             }
 	}
-	svg.select("rect.clickrect").call(drag);
+	svg.select("rect.clickrect").on("click", dragmove).call(drag);
 
 	if (showHeatmap)
             data = $data.timeslices;

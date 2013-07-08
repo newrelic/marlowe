@@ -63,7 +63,7 @@
   timeseries(d3.select("#timeseries"))
     .legend(plots);
 
-  histogramInit(d3.select("div#histogram"));
+  var histogram = histogram(d3.select("div#histogram"));
   var s = summary(d3.select("div#summary-values-sect"));
   s.row()
       .column("50 % (Median)", "median", "ms")

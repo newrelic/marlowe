@@ -16,10 +16,6 @@
 
 .row
   .span12
-    %h3
-      %span#range Range: All
-      %button#reset{style: 'display: none', onClick: 'resetSelection();'}
-        RESET
     #summary-values-sect
     %div
       .radio.inline Show quartile region: 
@@ -50,7 +46,11 @@
 .row
   .span12
     %h3 
-      Histogram
+      Histogram     
+      %span#range
+      %button#reset{style: 'display: none', onClick: 'resetSelection();'}
+        RESET
+
       %img.histogram.busy{src:'/images/busy.gif', style: 'display:none'}
     #histogram
 
@@ -61,7 +61,7 @@
   var timeseries = timeseries(d3.select("#timeseries"));
   //  .legend(["mean", "mode", "median", "apdex", "rpm"]);
 
-  histogramInit(d3.select("div#histogram"));
+  var histogram = histogram(d3.select("div#histogram"));
 
   var s = summary(d3.select("div#summary-values-sect"));
   s.row()
