@@ -99,7 +99,7 @@ function timeseries(div) {
             .attr("width", legendItemWidth)
             .attr("height", legendItemHeight)
             .on("click", function(d) {
-		heatmap(!showHeatmap);
+		svg.heatmap(!showHeatmap);
             });
 
 	g.append("text")
@@ -107,7 +107,7 @@ function timeseries(div) {
             .attr("class", "legend")
             .text("heatmap")
             .on("click", function(d) {
-		heatmap(!showHeatmap);
+		svg.heatmap(!showHeatmap);
             });
 
 	g.append("rect")

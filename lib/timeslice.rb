@@ -82,14 +82,17 @@ class Timeslice
       g_mean: geometric_mean.to_i,
       g_stddev: geometric_standard_deviation.round(2),
       # upper tail probabilities
+      g_p75: geometric_interval(0.675), # p(0.25)
       g_p85: geometric_interval(1.036), # p(0.15)
       g_p95: geometric_interval(1.645), # p(0.05)
       g_p99: geometric_interval(2.326), # p(0.01)
+      a_p75: arithmetic_interval(0.675), # p(0.25)
       a_p85: arithmetic_interval(1.036), # p(0.15)
       a_p95: arithmetic_interval(1.645), # p(0.05)
       a_p99: arithmetic_interval(2.326), # p(0.01)
       pct_25: percentile(0.25),  
       pct_75: percentile(0.75),  
+      pct_85: percentile(0.85),  
       pct_95: percentile(0.95),  
       pct_99: percentile(0.99),  
       median: percentile(0.5),
