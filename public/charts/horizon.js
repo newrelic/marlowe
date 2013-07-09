@@ -1,8 +1,9 @@
 function horizonInit(div) {
 
+    var height = 40;
     var chart = d3.horizon()
             .width($data.width)
-            .height($data.height)
+            .height(height)
             .bands(1)
             .mode("mirror")
             .interpolate("basis");
@@ -15,7 +16,6 @@ function horizonInit(div) {
 	    chart.yMax(null);
         else
 	    chart.yMax($data.yMax);
-
 	var parents = div.selectAll("div.sparkline")
 	    .data(names);
 
@@ -41,7 +41,7 @@ function horizonInit(div) {
 		    return [new Date(timeslice.time), 
 			    timeslice.breakdown[name] ? timeslice.breakdown[name][1]/timeslice.breakdown[name][0] : 0];
 		})]})
-	    .attr("height", $data.height / chart.bands())
+	    .attr("height", height)
 	    .call(chart.duration(1000));
 
 	parents.exit().remove();
@@ -51,10 +51,10 @@ function horizonInit(div) {
 	var n = Math.max(1, chart.bands() + d);
 	d3.select("#horizon-bands-value").text(n);
 	div.selectAll("svg")
-	    .call(chart.duration(1000).bands(n).height($data.height / n))
+	    .call(chart.duration(1000).bands(n).height(height))
 	    .transition()
 	    .duration(1000)
-	    .attr("height", $data.height / n);
+	    .attr("height", height)
     });
     var checkbox = d3.select("input#unnormalized");
     $data.dispatch.on("newTimesliceData.horizon", horizonUpdate);  
