@@ -18,7 +18,7 @@ function timeseries(div) {
     var xScale = d3.time.scale().rangeRound([0, $data.width]),
     yScale = d3.scale.linear().rangeRound([$data.height, 0]),
     apdexScale = d3.scale.linear().rangeRound([$data.height, 0]).domain([0, 1]),
-    colorScale = d3.interpolateRgb("#ffe", "#333"),
+    colorScale = d3.interpolateRgb("#fff", "#000"),
     throughputScale = d3.scale.linear().range([$data.height, 50]),
     legendPlots = [];
 
@@ -42,10 +42,11 @@ function timeseries(div) {
     });
 
     // The rectangle for capturing drag events.
+
     chart.append("rect")
         .attr("class", "clickrect")
         .attr("opacity", 1e-6)
-        .style("fill", "#EEE")
+        .style("fill", "#FFF")
         .attr("width", $data.width)
         .attr("height", $data.height);
 
@@ -311,6 +312,7 @@ function timeseries(div) {
             rect.transition().duration(250).style("opacity", 0.2);
         svg.update();
         d3.select("img.timeseries.busy").style("display", "none");
+        return svg;
     }
 
     svg.update = function() {
@@ -370,7 +372,6 @@ function timeseries(div) {
             });
 
 	bar.exit()
-            .transition().duration(250)
             .remove();
 
 	var rect = bar.selectAll("rect")

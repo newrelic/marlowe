@@ -14,7 +14,7 @@
     $data.width = 800;
     $data.height = 300;
   :css
-    #logTransformGroup, #apdexTGroup {
+    #apdexTGroup {
       display: none;
     }
 
@@ -41,6 +41,10 @@
       %label.radio.inline
         %input#appserver{type: 'radio', name: 'quartile', value: "", checked: true, onchange: 'selectQuartile(this);'}
         none
+    %p
+      %label.inline.checkbox
+        %input{type: 'checkbox', name: 'heatmap', onchange: 'timeseries.heatmap(this.checked);' }
+        Show heatmap
     #timeseries
 .row
   .span12
@@ -56,7 +60,8 @@
 :javascript
   // This defines the attributes of the timeslice record that are in the legend of the plot.
   var plots = ["mean", "mode", "median", "apdex", "rpm"];
-  timeseries(d3.select("#timeseries"))
+  var timeseries = timeseries(d3.select("#timeseries"))
+    .heatmap()
     .legend(plots);
 
   var histogram = histogram(d3.select("div#histogram"));

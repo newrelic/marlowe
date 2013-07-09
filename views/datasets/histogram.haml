@@ -68,7 +68,9 @@
   s.row()
       .column("50 % (Median)", "median", "ms")
       .column("Mean", "mean", "ms")
-      .column("Mode", "mode", "ms")
+      .column("75 %", "pct_75", "ms")
+      .column("85 %", "pct_85", "ms")
+      .column("95 %", "pct_95", "ms")
       .column("Apdex","apdex", "score");
   s.init();
 
