@@ -2,7 +2,8 @@ Marlowe APM Visualization Tool
 ================
 
 This is a [Sinatra app](http://www.sinatrarb.com/) used to present page event data in different charts using 
-[D3](http://d3js.org/).
+[D3](http://d3js.org/).  It's meant to be a simple platform for exploring Application Performance Management (APM)
+data with experimental visualizations and animations.  I welcome contributions.
 
 Requirements
 ---------------
@@ -36,7 +37,7 @@ For details on the format, refer to the [readme.md](data/readme.md) file in the 
 Special Thanks
 ------------------
 
-Ward Cunningham for inspiration and the contribution of the Treemap,
+Ward Cunningham for inspiration and the contribution of the Treemap and Traffic demos.
 
 Etan Lightstone, Patrick Lightbody and the rest of the New Relic crew who
 helped out greatly with feedback and suggestions.
