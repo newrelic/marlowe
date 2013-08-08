@@ -166,22 +166,11 @@ function initTraffic(div) {
     });
 }
 
-function adjust (json) {
-    for (var i = json.length - 1; i >= 0; i--) {
-        json[i][0] -= json[i][3];   // move time back to start of transaction
-    }
-    json.sort(function(a,b){ return a[0]-b[0]; });
-    while(json[0][3]>1000) {
-        json.shift();               // remove stragglers from long ago
-    }
-}
-
 function updateTraffic(error, json, div) {
     if(error) {
         readout(error);
     } else {
         var now = new Date().getTime();
-        adjust(json);
         div.node().stream = {start: now, wall: now, sleep: 0, first: json[0][0], last: json[json.length-1][0], index: 0, data: json,};
     }
 }

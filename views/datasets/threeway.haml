@@ -7,14 +7,14 @@
     $data.yMax = #{@y_max};
     $data.density = #{@density};
     $data.apdex_t = #{@apdex_t};
-    $data.value_index = #{@value_index};
+    $data.measure = "#{@measure}";
     $data.filter = "#{@filter_label}";
     $data.only = "#{@only ? '1' : '0'}";
 
     function loadTreemapData(switchedFile) {
       d3.selectAll("img.busy").style("display", "inline");
       d3.json("/data/treemap/"+$data.file + "?" +
-        "value_index="+$data.value_index + "&" +
+        "measure="+$data.measure + "&" +
         "only=" + $data.only + "&" +
         "buckets=" + ($data.density * $data.width / $data.height) + "&" +
         "filter=" + $data.filter + "&" +

@@ -18,7 +18,7 @@ class Timeslice
     @breakdown = {}
     @timestamp = timestamp
     @duration = duration
-    @value_index = opts[:value_index] || 4
+    @measure = opts[:measure] || :backend
     @histogram_bucket_count = opts[:histogram_bucket_count]
     @histogram_bucket_size =  opts[:histogram_bucket_size]
     @t = (opts[:apdex_t] || 500).to_f
@@ -29,12 +29,13 @@ class Timeslice
       @histogram_bucket_count ||= 10000 / @histogram_bucket_size
       @histogram_buckets = [0] * (@histogram_bucket_count + 1)
     end
+    @primary_attr = opts[:primary_attr] || :transaction
   end
 
   # There's an anomaly in some of the data where the value is zero.
   # We're going to treat zero as absent
-  def add(record) 
-    v = record[@value_index]
+  def add(event) 
+    v = event[@measure]
     return if v.zero?
     if @log_transform
       v = 500 * Math.log(v)
@@ -58,7 +59,7 @@ class Timeslice
     end
 
     # Transaction name, or other attribute:
-    label = record[2]
+    label = event[@primary_attr]
     @breakdown[label] ||= [0, 0]
     @breakdown[label][0] += 1
     @breakdown[label][1] += v

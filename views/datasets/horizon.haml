@@ -8,12 +8,12 @@
     $data.yMax = #{@y_max};
     $data.density = 15
     $data.apdex_t = #{@apdex_t};
-    $data.value_index = #{@value_index};
+    $data.measure = "#{@measure}";
     $data.filter = "#{@filter_label}";
     $data.only = "#{@only ? '1' : '0'}";
 
   :css
-    #logTransformGroup, #densityGroup, #apdexTGroup {
+    #logTransformGroup, #densityGroup, #apdexTGroup, #filterGroup {
       display: none;
     }
 

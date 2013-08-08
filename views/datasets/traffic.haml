@@ -2,7 +2,7 @@
   %script{type: 'text/javascript', src: "/charts/timeseries.js"}
   %script{type: 'text/javascript', src: "/charts/traffic.js"}
   :css
-    #logTransformGroup, #apdexTGroup {
+    #logTransformGroup, #apdexTGroup, #densityGroup {
       display: none;
     }
 
@@ -12,9 +12,9 @@
     $data.width = 800;
     $data.height = 200;
     $data.yMax = #{@y_max};
-    $data.density = #{@density};
+    $data.density = 30;
     $data.apdex_t = #{@apdex_t};
-    $data.value_index = 3;
+    $data.measure = "frontend";
     $data.filter = "#{@filter_label}";
     $data.only = "#{@only ? '1' : '0'}";
 
@@ -27,7 +27,7 @@
 :javascript
   initTraffic(d3.select("#display"));
   $data.dispatch.on("reloadData.traffic", function(switchedFile)  {
-       d3.json("/data/raw/"+$data.file + "?" +
+       d3.json("/data/filtered/"+$data.file + "?" +
         "only=" + $data.only + "&" +
         "filter=" + $data.filter, function(error, json) {
          updateTraffic(error, json, d3.select("#display"));

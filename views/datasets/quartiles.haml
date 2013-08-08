@@ -8,7 +8,7 @@
     $data.logTransform = #{@log_transform};
     $data.density = #{@density};
     $data.apdex_t = #{@apdex_t};
-    $data.value_index = #{@value_index};
+    $data.measure = "#{@measure}";
     $data.filter = "#{@filter_label}";
     $data.only = "#{@only ? '1' : '0'}";
     $data.width = 800;
@@ -30,16 +30,16 @@
     %p
       .radio.inline Show estimated quartile region using: 
       %label.radio.inline
-        %input#enduser{type: 'radio', name: 'quartile', value: "arithmetic", onchange: 'selectQuartile(this);'}
+        %input{type: 'radio', name: 'quartile', value: "arithmetic", onchange: 'selectQuartile(this);'}
         arithmetic values
       %label.radio.inline
-        %input#appserver{type: 'radio', name: 'quartile', value: "geometric", onchange: 'selectQuartile(this);'}
+        %input{type: 'radio', name: 'quartile', value: "geometric", onchange: 'selectQuartile(this);'}
         geometric values
       %label.radio.inline
-        %input#appserver{type: 'radio', name: 'quartile', value: "actual", onchange: 'selectQuartile(this);'}
+        %input{type: 'radio', name: 'quartile', value: "actual", onchange: 'selectQuartile(this);'}
         actual percentiles
       %label.radio.inline
-        %input#appserver{type: 'radio', name: 'quartile', value: "", checked: true, onchange: 'selectQuartile(this);'}
+        %input{type: 'radio', name: 'quartile', value: "", checked: true, onchange: 'selectQuartile(this);'}
         none
     %p
       %label.inline.checkbox

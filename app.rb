@@ -2,6 +2,7 @@ $LOAD_PATH.unshift File.expand_path "../lib", __FILE__
 require 'sinatra'
 require 'json'
 require 'timeslice'
+require 'events'
 require "sinatra/content_for"
 
 # This is a Sinatra app for handing data to the d3 visualizations.  It defines
@@ -14,6 +15,7 @@ before '/data/:type/:file' do |type, file|
   content_type 'application/json'
   read_data
 end  
+
 
 get '/' do
   haml :index
@@ -55,8 +57,8 @@ get '/data/aggregate/:file' do
   JSON.pretty_generate timeseries_data
 end
 
-get '/data/raw/:file' do
-  JSON.pretty_generate(@data)
+get '/data/filtered/:file' do
+  @data.to_json
 end
 
 get '/data/treemap/:file' do
@@ -66,7 +68,8 @@ end
 
 helpers do
   def process_params
-    @value_index = (params[:value_index] ? params[:value_index].to_i : 4)
+    @measure = (params[:measure] ? params[:measure].to_sym : :backend)
+    @primary_attr = params.include?(:attr) ? params[:attr].to_sym : :transaction
     @apdex_t = (params[:apdex_t] || 800).to_i
     @y_max = (params[:y_max] || 5000).to_i
     @density = (params[:density] || 60).to_i
@@ -78,11 +81,8 @@ helpers do
 
   def read_data
     text = File.read("data/#{@file}")
-    @data = JSON.parse text
-    @data.select! do | rec |
-      (@only && rec[2] == @filter_label) ||
-        (!@only && rec[2] != @filter_label)
-    end if @filter_label
+    @data = Events.new(JSON.parse text)
+    @data.filter! @primary_attr, @filter_label, @only if @filter_label
   end
 
   # This generates a json object consisting of an array of Timeslice records.
@@ -93,32 +93,34 @@ helpers do
     histogram_bucket_count = @density - 1
     histogram_bucket_size = @y_max.to_f / histogram_bucket_count
     num_values = (params[:buckets] || @density * 4).to_i
-    start_date = @data.first[0]
-    end_date = @data.last[0]
+    start_date = @data.start_timestamp
+    end_date = @data.end_timestamp
     bucket_width = (end_date - start_date) / num_values
     buckets = []
     num_values.times do |i| 
       buckets[i] = Timeslice.new(start_date + i * bucket_width, 
                               bucket_width,
+                              :primary_attr => @primary_attr,
                               :histogram_bucket_size => histogram_bucket_size,
                               :histogram_bucket_count => histogram_bucket_count,
-                              :value_index => @value_index, 
+                              :measure => @measure,
                               :log_transform => @log_transform,
                               :apdex_t => @apdex_t)
-
     end
+
     summary = Timeslice.new(start_date, 
                          end_date - start_date,
+                         :primary_attr => @primary_attr,
                          :histogram_bucket_size => histogram_bucket_size,
                          :histogram_bucket_count => histogram_bucket_count,
                          :log_transform => @log_transform,
-                         :value_index => @value_index, 
+                         :measure => @measure,
                          :apdex_t => @apdex_t)
 
-    @data.each do | vals |
-      index = [(vals[0] - start_date) / bucket_width, num_values - 1].min.floor
-      buckets[index] << vals
-      summary << vals
+    @data.each do | event |
+      index = [(event.timestamp - start_date) / bucket_width, num_values - 1].min.floor
+      buckets[index] << event
+      summary << event
     end
     # Put the series summary on the front
     buckets.unshift summary
@@ -131,22 +133,20 @@ helpers do
   def tree_data
     # column is a timeslice
     num_timeslices = (params[:buckets] || @density * 4).to_i
-    start_date = @data.first[0]
-    end_date = @data.last[0]
+    start_date = @data.start_timestamp
+    end_date = @data.end_timestamp
     timeslice_width = (end_date - start_date) / num_timeslices
 
     num_buckets = @density - 1
     bucket_width = @y_max.to_f / num_buckets
     flat_counts = {}
     nodes = {}
-    @data.each do | vals |
-      x = vals[0]
+    @data.each do | event |
+      x = event.timestamp
       # The timeslice bucket the value belongs in
       timeslice_index = [(x - start_date) / timeslice_width, num_timeslices - 1].min.floor
-      # index =           [(vals[0] - start_date) / bucket_width,    num_values - 1].min.floor
-      # the label
-      k = vals[2]
-      v = vals[@value_index].to_i
+      k = event[@primary_attr]
+      v = event[@measure].to_i
       # the histogram bucket the value belongs in
       bucket_index = [(v / bucket_width).to_i, num_buckets].min
       node = nodes

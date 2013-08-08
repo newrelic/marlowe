@@ -14,9 +14,8 @@ $data.yMax = 5000;
 $data.density = 50;
 $data.apdex_t = 500;
 // The json files have two different values that can be plotted, front end
-// and back end.  The index refers to the location of the value in each record.
-// 3 for end user, 4 for app server.
-$data.value_index = 3;
+// and back end.
+$data.measure = "frontend";
 
 $data.dispatch = d3.dispatch("newTreemapData",    // new treemap data loaded
 			     "newTimesliceData",  // new timeslice data loaded 
@@ -126,7 +125,7 @@ function refreshData() {
 	$data.selectedTimeslice = -1;
 	showSelection();
     }
-    $data.value_index = (d3.select("input#enduser").node().checked ? 3 : 4);
+    $data.measure = d3.select("input#frontend").node().checked ? "frontend" : "backend";
     $data.only = d3.select("input#only").node().checked ? "1" : "0";
     $data.logTransform = d3.select("input#log_transform").node().checked ? "1" : "0";
     $data.dispatch.reloadData(switchedFile);
@@ -137,12 +136,12 @@ function loadTimesliceData(switchedFile) {
 
     d3.selectAll("img.busy").style("display", "inline");
     d3.json("/data/aggregate/"+$data.file+"?" + 
-            "value_index=" + $data.value_index + "&" +
+            "measure=" + $data.measure + "&" +
             "apdex_t=" + $data.apdex_t + "&" +
             "buckets=" + ($data.density * $data.width / $data.height) + "&" +
             "filter=" + $data.filter + "&" +
             "density=" + $data.density + "&" +
-            "value_index=" + $data.value_index + "&" +
+            "measure=" + $data.measure + "&" +
             "y_max=" + $data.yMax + "&" +
             "log=" + $data.logTransform + "&" +
             "only=" + $data.only,
@@ -175,8 +174,8 @@ function loadTimesliceData(switchedFile) {
 		}
 		$data.dispatch.newTimesliceData();
             });
-    d3.select("input#enduser").attr("checked", $data.value_index == 3 ? 'true' : null);
-    d3.select("input#appserver").attr("checked", $data.value_index == 4 ? 'true' : null);
+    d3.select("input#frontend").attr("checked", $data.measure == "frontend" ? 'true' : null);
+    d3.select("input#backend").attr("checked", $data.measure == "backend" ? 'true' : null);
     d3.select("input#only").attr("checked", $data.only == "1" ? 'true' : null);
     d3.select("input#except").attr("checked", $data.only == "0" ? 'true' : null);
 }
