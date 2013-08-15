@@ -45,17 +45,17 @@
           .control-group#yMaxGroup
             %label.control-label y max
             .controls
-              %input#y_max{type: 'text', size: 6, name: 'y_max' }
-              %input.slider{type:'range', min: 3000, step: 100, max: 20000, onchange: "updateYMax(this)"}
+              %input#y_max{type: 'text', size: 6, name: 'y_max', onchange: 'this.form.submit();' }
+              %input.slider{type:'range', min: 1000, step: 100, max: 20000, onchange: "updateYMax(this)"}
           .control-group#densityGroup
             %label.control-label plot density
             .controls
-              %input#density{type: 'text', size: 6, name: 'density' }
+              %input#density{type: 'text', size: 6, name: 'density', onchange: 'this.form.submit();' }
               %input.slider{type:'range', min: 8, step: 2, max: 140, onchange: "updateDensity(this)"}
           .control-group#apdexTGroup
             %label.control-label apdex T
             .controls
-              %input#apdex_t{type: 'text', size: 6, name: 'apdex_t' }
+              %input#apdex_t{type: 'text', size: 6, name: 'apdex_t', onchange: 'this.form.submit();' }
               %input.slider{type:'range', min: 100, step: 100, max: 5100, onchange: "updateApdex(this)"}
         .span4
           .control-group

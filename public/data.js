@@ -166,9 +166,10 @@ function loadTimesliceData(switchedFile) {
 		});
 		$data.timeslices = data;
 		if (switchedFile) {
-		    var scopes = d3.keys($data.summaryTimeslice.breakdown).slice(0,20);
-		    // update the options menu for filter by dimension
-		    scopes.unshift("")
+		    var scopes = d3.keys($data.summaryTimeslice.breakdown)
+                .slice(0,20)
+		        .filter(function(scope){ return scope != "" });
+            scopes.unshift("");
 		    var options = d3.select("select#filter").selectAll("option").data(scopes);
 		    options.enter()
 			.append("option")

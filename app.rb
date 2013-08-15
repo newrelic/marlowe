@@ -157,6 +157,7 @@ helpers do
       timeslice_index = [(x - start_date) / timeslice_width, num_timeslices - 1].min.floor
       k = event[@primary_dim]
       v = event[@measure].to_i
+      next unless k && v
       # the histogram bucket the value belongs in
       bucket_index = [(v / bucket_width).to_i, num_buckets].min
       node = nodes
