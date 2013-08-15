@@ -9,11 +9,13 @@
     $data.density = 15
     $data.apdex_t = #{@apdex_t};
     $data.measure = "#{@measure}";
+    $data.primary_attr = "#{@primary_attr}";
+    $data.all_attrs = #{@all_attrs.to_json};
     $data.filter = "#{@filter_label}";
     $data.only = "#{@only ? '1' : '0'}";
 
   :css
-    #logTransformGroup, #densityGroup, #apdexTGroup, #filterGroup {
+    #logTransformGroup, #densityGroup, #apdexTGroup, #filterGroup, #attrGroup {
       display: none;
     }
 

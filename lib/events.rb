@@ -60,7 +60,7 @@ class Events
   def to_json
     s = StringIO.new
     s << "[\n"
-    #s << "#{self.columns.to_json},\n"
+    s << "#{self.columns.to_json},\n"
     @events.each_with_index do | event, i | 
       s << event.to_a.to_json
       s << "," if i < @events.size - 1

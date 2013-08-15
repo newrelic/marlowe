@@ -16,7 +16,8 @@ $data.apdex_t = 500;
 // The json files have two different values that can be plotted, front end
 // and back end.
 $data.measure = "frontend";
-
+$data.primary_attr = "transaction";
+$data.all_attrs = ["transaction"];
 $data.dispatch = d3.dispatch("newTreemapData",    // new treemap data loaded
 			     "newTimesliceData",  // new timeslice data loaded 
 			     "newHorizonData",  // new timeslice data loaded 
@@ -117,8 +118,10 @@ function refreshData() {
     $data.apdex_t = d3.select("input#apdex_t").node().value;
     $data.filter = d3.select("select#filter").node().selectedOptions[0].value;
     var nextFile = d3.select("select#filename").node().selectedOptions[0].value;
-    var switchedFile = nextFile != $data.file
+    var nextAttr = d3.select("select#primary_attr").node().selectedOptions[0].value;
+    var switchedFile = nextFile != $data.file || nextAttr != $data.primary_attr;
     if (switchedFile) {
+        $data.primary_attr = nextAttr;
 	$data.file = nextFile;
 	$data.filter = "";
 	$data.selectedBucket = -1;
@@ -141,7 +144,8 @@ function loadTimesliceData(switchedFile) {
             "buckets=" + ($data.density * $data.width / $data.height) + "&" +
             "filter=" + $data.filter + "&" +
             "density=" + $data.density + "&" +
-            "measure=" + $data.measure + "&" +
+            "primary_attr=" + $data.primary_attr + "&" +
+            "value_index=" + $data.value_index + "&" +
             "y_max=" + $data.yMax + "&" +
             "log=" + $data.logTransform + "&" +
             "only=" + $data.only,
@@ -150,7 +154,9 @@ function loadTimesliceData(switchedFile) {
 		// calculate the maximum bucket for all the histograms.  This will help
 		// us keep the y scale the same
 		$data.bucketMax = 0;
-		// The first bucket is the summary for the entire time range
+		// The first bucket is the list of attributes for the dataset
+		$data.all_attrs = data.shift();
+		// The second bucket is the summary for the entire time range
 		$data.summaryTimeslice = data.shift();
 		$data.summaryTimeslice.time = new Date($data.summaryTimeslice.time);
 		data.forEach(function(d) {
@@ -161,7 +167,7 @@ function loadTimesliceData(switchedFile) {
 		$data.timeslices = data;
 		if (switchedFile) {
 		    var scopes = d3.keys($data.summaryTimeslice.breakdown).slice(0,20);
-		    // update the options menu for the scope
+		    // update the options menu for filter by attribute
 		    scopes.unshift("")
 		    var options = d3.select("select#filter").selectAll("option").data(scopes);
 		    options.enter()
@@ -170,7 +176,17 @@ function loadTimesliceData(switchedFile) {
 			.attr("value",String)
 			.attr("selected", function(m) { return (m == $data.filter) ? "true" : null; })
 			.text(function(m) { return m == "" ? "All" : m });
-		    options.exit().remove();
+		    options.exit().remove()
+		    
+		    // update the options menu for the attribute to view
+		    options = d3.select("select#primary_attr").selectAll("option").data($data.all_attrs);
+		    options.enter()
+		        .append("option")
+		    options
+			.attr("value",String)
+			.attr("selected", function(m) { return (m == $data.primary_attr) ? "true" : null; })
+			.text(String);
+		    options.exit().remove()
 		}
 		$data.dispatch.newTimesliceData();
             });

@@ -16,6 +16,8 @@
     $data.apdex_t = #{@apdex_t};
     $data.measure = "frontend";
     $data.filter = "#{@filter_label}";
+    $data.primary_attr = "#{@primary_attr}";
+    $data.all_attrs = #{@all_attrs.to_json};
     $data.only = "#{@only ? '1' : '0'}";
 
 .row
@@ -30,6 +32,7 @@
        d3.json("/data/filtered/"+$data.file + "?" +
         "only=" + $data.only + "&" +
         "filter=" + $data.filter, function(error, json) {
+         json.shift(); // remove the header row
          updateTraffic(error, json, d3.select("#display"));
        });
   });

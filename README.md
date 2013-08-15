@@ -43,21 +43,32 @@ For details on the format, refer to the [readme.md](data/readme.md) file in the 
 Changes
 ------------------
 
-* Aug 9, 2013 -
-    Implemented alternative format for datasets paving the way for doing more
-    with datasets that had more than one attribute.  
+### Aug 15, 2013
 
-* July 8, 2013 -
-    Added quartile region shading in historgrams and timeseries charts
+Implemented selectors allowing you to pick different attributes in a
+single dataset.
 
-* July 3, 2013 -
-    Incorporated [Ward Cuningham](http://c2.org)'s Traffic demo
+### Aug 9, 2013 
 
-* June 29, 2013 -
-    Added a horizon chart
+Implemented alternative format for datasets paving the way for doing
+more with datasets that had more than one attribute.
 
-* June 2013 -
-    Introduced Marlowe in preparation for talk at Velocity Santa Clara 2013
+### July 8, 2013 
+
+Added quartile region shading in historgrams and timeseries charts
+
+### July 3, 2013 
+
+Incorporated [Ward Cuningham](http://c2.org)'s Traffic demo
+
+### June 29, 2013
+
+Added a horizon chart
+
+### June 2013
+
+Introduced Marlowe in preparation for talk at Velocity Santa Clara 2013
+
 
 Special Thanks
 ------------------
@@ -67,5 +78,4 @@ contribution of the Treemap and Traffic demos.
 
 Etan Lightstone, Patrick Lightbody and the rest of the New Relic crew
 who helped out greatly with feedback and suggestions.
-
 

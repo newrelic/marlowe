@@ -68,8 +68,14 @@ end
 
 helpers do
   def process_params
+    # Identifies what scalar measure we are evaluating.  Supports values in two different columns:
+    # backend and frontend
     @measure = (params[:measure] ? params[:measure].to_sym : :backend)
-    @primary_attr = params.include?(:attr) ? params[:attr].to_sym : :transaction
+
+    # Identifies what measure to group by such as account, transaction (URL), user, etc.
+    @primary_attr = params[:primary_attr] ? params[:primary_attr].to_sym : :transaction
+
+    # T value for evaluating apdex scores
     @apdex_t = (params[:apdex_t] || 800).to_i
     @y_max = (params[:y_max] || 5000).to_i
     @density = (params[:density] || 60).to_i
@@ -83,6 +89,7 @@ helpers do
     text = File.read("data/#{@file}")
     @data = Events.new(JSON.parse text)
     @data.filter! @primary_attr, @filter_label, @only if @filter_label
+    @all_attrs = (@data.columns - [:timestamp, :unused, :frontend, :backend]).map(&:to_s)
   end
 
   # This generates a json object consisting of an array of Timeslice records.
@@ -122,9 +129,12 @@ helpers do
       buckets[index] << event
       summary << event
     end
-    # Put the series summary on the front
+    # Next put the series summary on the front
     buckets.unshift summary
-    buckets.map { |b| b.record }
+    buckets.map! { |b| b.record }
+    # Put the list of attributes at the front
+    buckets.unshift @all_attrs
+    buckets
   end
 
   # Generate a json tree where the branches have children and the

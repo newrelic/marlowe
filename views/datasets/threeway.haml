@@ -9,12 +9,15 @@
     $data.apdex_t = #{@apdex_t};
     $data.measure = "#{@measure}";
     $data.filter = "#{@filter_label}";
+    $data.primary_attr = "#{@primary_attr}";
+    $data.all_attrs = #{@all_attrs.to_json};
     $data.only = "#{@only ? '1' : '0'}";
 
     function loadTreemapData(switchedFile) {
       d3.selectAll("img.busy").style("display", "inline");
       d3.json("/data/treemap/"+$data.file + "?" +
         "measure="+$data.measure + "&" +
+        "primary_dim="+$data.primary_dim + "&" +
         "only=" + $data.only + "&" +
         "buckets=" + ($data.density * $data.width / $data.height) + "&" +
         "filter=" + $data.filter + "&" +
@@ -58,7 +61,8 @@
         RESET
       %img.treemap.busy{src:'/images/busy.gif', style: 'display:none'}
     %p
-      Display requests grouped by path.  Region area corresponds to call count for selected ranges.  Drag over above charts to select a range.
+      Display requests grouped by selected dimension.  Color groupings based on the first segment of a dimension,
+      separated by '/'.  If there is no '/' character then the map is all one color.
       %a{href: '/data/treemap/nr-queuing-spike.json', target: "_new"}
         See sample json.
     #treemap-sect

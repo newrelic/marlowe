@@ -73,6 +73,14 @@
                 %input#backend{type: 'radio', name: 'measure', value: "backend", onchange: 'refreshData();'}
                 app server
 
+          .control-group#attrGroup
+            %label.control-label group by
+            .controls
+              %select#primary_attr{name: 'primary_attr', size: 1, onchange: 'refreshData();'}
+                - (@all_attrs||[:transaction]).each do |m|
+                  %option{value: m, selected: (@primary_attr && @primary_attr.to_sym == m.to_sym)}
+                    = m
+
           .control-group#filterGroup
             %label.control-label filter
             .controls
