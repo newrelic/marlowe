@@ -29,7 +29,7 @@ class Timeslice
       @histogram_bucket_count ||= 10000 / @histogram_bucket_size
       @histogram_buckets = [0] * (@histogram_bucket_count + 1)
     end
-    @primary_attr = opts[:primary_attr] || :transaction
+    @primary_dim = opts[:primary_dim] || :transaction
   end
 
   # There's an anomaly in some of the data where the value is zero.
@@ -58,8 +58,8 @@ class Timeslice
       @histogram_buckets[[(v / @histogram_bucket_size).to_i, @histogram_bucket_count].min] += 1
     end
 
-    # Transaction name, or other attribute:
-    label = event[@primary_attr]
+    # Transaction name, or other dimension:
+    label = event[@primary_dim]
     @breakdown[label] ||= [0, 0]
     @breakdown[label][0] += 1
     @breakdown[label][1] += v

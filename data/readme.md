@@ -11,7 +11,7 @@ Datasets are encoded as json data.  There are two formats with built
 in support:
 
 * Old format: arbitrary format where each json record had exactly 5 columns
-* New (v2) format: more flexibility for specifying multiple attributes
+* New (v2) format: more flexibility for specifying multiple dimensions
 
 What is an Event?
 -----------------------
@@ -27,11 +27,11 @@ the browser (frontend) and those measured by the appserver agent
 
 Events do not have to be in order.
 
-What is an Attribute?
+What is an dimension?
 ---------------------
-An event has one or more attributes.  The most obvious one is the URL or resource
+An event has one or more dimensions.  The most obvious one is the URL or resource
 path, normalized to exclude parameters.  We refer to this as the `transaction`
-generally, not URL.  Other attributes include things like the browser, region,
+generally, not URL.  Other dimensions include things like the browser, region,
 or account.
 
 New Dataset Format
@@ -46,7 +46,7 @@ milliseconds, identifying when the transaction _started_.
 
 It must also include one of `backend`, `frontend` or both.
 
-Other columns are interpreted as attributes of the transaction, such
+Other columns are interpreted as dimensions of the transaction, such
 as `browser`, `url`, `account`, etc.
 
 Support for Other Formats

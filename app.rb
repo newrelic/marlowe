@@ -73,7 +73,7 @@ helpers do
     @measure = (params[:measure] ? params[:measure].to_sym : :backend)
 
     # Identifies what measure to group by such as account, transaction (URL), user, etc.
-    @primary_attr = params[:primary_attr] ? params[:primary_attr].to_sym : :transaction
+    @primary_dim = params[:primary_dim] ? params[:primary_dim].to_sym : :transaction
 
     # T value for evaluating apdex scores
     @apdex_t = (params[:apdex_t] || 800).to_i
@@ -88,8 +88,8 @@ helpers do
   def read_data
     text = File.read("data/#{@file}")
     @data = Events.new(JSON.parse text)
-    @data.filter! @primary_attr, @filter_label, @only if @filter_label
-    @all_attrs = (@data.columns - [:timestamp, :unused, :frontend, :backend]).map(&:to_s)
+    @data.filter! @primary_dim, @filter_label, @only if @filter_label
+    @dimensions = (@data.columns - [:timestamp, :unused, :frontend, :backend]).map(&:to_s)
   end
 
   # This generates a json object consisting of an array of Timeslice records.
@@ -107,7 +107,7 @@ helpers do
     num_values.times do |i| 
       buckets[i] = Timeslice.new(start_date + i * bucket_width, 
                               bucket_width,
-                              :primary_attr => @primary_attr,
+                              :primary_dim => @primary_dim,
                               :histogram_bucket_size => histogram_bucket_size,
                               :histogram_bucket_count => histogram_bucket_count,
                               :measure => @measure,
@@ -117,7 +117,7 @@ helpers do
 
     summary = Timeslice.new(start_date, 
                          end_date - start_date,
-                         :primary_attr => @primary_attr,
+                         :primary_dim => @primary_dim,
                          :histogram_bucket_size => histogram_bucket_size,
                          :histogram_bucket_count => histogram_bucket_count,
                          :log_transform => @log_transform,
@@ -132,8 +132,8 @@ helpers do
     # Next put the series summary on the front
     buckets.unshift summary
     buckets.map! { |b| b.record }
-    # Put the list of attributes at the front
-    buckets.unshift @all_attrs
+    # Put the list of dimensions at the front
+    buckets.unshift @dimensions
     buckets
   end
 
@@ -155,7 +155,7 @@ helpers do
       x = event.timestamp
       # The timeslice bucket the value belongs in
       timeslice_index = [(x - start_date) / timeslice_width, num_timeslices - 1].min.floor
-      k = event[@primary_attr]
+      k = event[@primary_dim]
       v = event[@measure].to_i
       # the histogram bucket the value belongs in
       bucket_index = [(v / bucket_width).to_i, num_buckets].min

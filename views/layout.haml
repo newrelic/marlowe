@@ -76,9 +76,9 @@
           .control-group#attrGroup
             %label.control-label group by
             .controls
-              %select#primary_attr{name: 'primary_attr', size: 1, onchange: 'refreshData();'}
-                - (@all_attrs||[:transaction]).each do |m|
-                  %option{value: m, selected: (@primary_attr && @primary_attr.to_sym == m.to_sym)}
+              %select#primary_dim{name: 'primary_dim', size: 1, onchange: 'refreshData();'}
+                - (@dimensions||[:transaction]).each do |m|
+                  %option{value: m, selected: (@primary_dim.to_s == m.to_s)}
                     = m
 
           .control-group#filterGroup

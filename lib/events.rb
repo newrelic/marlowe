@@ -8,10 +8,10 @@ class Events
     @events.each &block
   end
 
-  def filter! primary_attr, filter_label, only
+  def filter! primary_dim, filter_label, only
     @events.select! do | event |
-      (only && event[primary_attr] == filter_label) ||
-        (!only && event[primary_attr] != filter_label)
+      (only && event[primary_dim] == filter_label) ||
+        (!only && event[primary_dim] != filter_label)
     end
   end
 

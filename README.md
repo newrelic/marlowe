@@ -34,7 +34,7 @@ Just add json files to the data directory using the following format:
      ....
 
 The columns can be in any order, but must include `timestamp`, `transaction` and one of
-`frontend` or `backennd`.  They can include additional per-event attributes which may be 
+`frontend` or `backennd`.  They can include additional per-event dimensions which may be
 utilized in some experiments as alternatives to `transaction`.
 
 For details on the format, refer to the [readme.md](data/readme.md) file in the data directory.
@@ -45,13 +45,13 @@ Changes
 
 ### Aug 15, 2013
 
-Implemented selectors allowing you to pick different attributes in a
+Implemented selectors allowing you to pick different dimensions in a
 single dataset.
 
 ### Aug 9, 2013 
 
 Implemented alternative format for datasets paving the way for doing
-more with datasets that had more than one attribute.
+more with datasets that had more than one dimension.
 
 ### July 8, 2013 
 

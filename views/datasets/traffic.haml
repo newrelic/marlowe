@@ -16,8 +16,8 @@
     $data.apdex_t = #{@apdex_t};
     $data.measure = "frontend";
     $data.filter = "#{@filter_label}";
-    $data.primary_attr = "#{@primary_attr}";
-    $data.all_attrs = #{@all_attrs.to_json};
+    $data.primary_dim = "#{@primary_dim}";
+    $data.dimensions = #{@dimensions.to_json};
     $data.only = "#{@only ? '1' : '0'}";
 
 .row

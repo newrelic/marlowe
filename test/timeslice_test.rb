@@ -4,7 +4,7 @@ describe Timeslice do
   # Load the timeslice with the testdata which has values: 100, 200, 400, 800, 1000
   # The testdata file is in the same format as the other raw data files
   before do
-    @timeslice = Timeslice.new(0, 1000, apdex_t: 200, primary_attr: :backend)
+    @timeslice = Timeslice.new(0, 1000, apdex_t: 200, primary_dim: :backend)
     json = JSON.parse File.read(File.expand_path "../../data/testdata.json", __FILE__)
     events = Events.new json
     events.each { |record| @timeslice << record }
