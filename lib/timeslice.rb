@@ -168,7 +168,7 @@ class Timeslice
     return 0 if count == 0 
     v1 = @sum_of_log_squares.to_f/count 
     v2 = (@sum_of_logs.to_f/count)**2
-    Math.exp(Math.sqrt(v1 - v2))
+    Math.exp(Math.sqrt([0, v1 - v2].max))
   end
 
   def geometric_interval(num) 
