@@ -46,6 +46,7 @@ PLATFORMS
 DEPENDENCIES
   haml
   json
+  rack
   rack-cache
   rdiscount
   rspec
