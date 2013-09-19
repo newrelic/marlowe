@@ -129,6 +129,7 @@ function initTraffic(div) {
 	if (stream == null) {
             return;
 	}
+        var dimensionIndex = stream['dimension'];
 	var now = new Date().getTime();
 	var delay = now - stream.wall;
         if (t = stream.data[stream.index]) {
@@ -141,7 +142,7 @@ function initTraffic(div) {
 	}
 	var want = now - stream.start + stream.first - stream.sleep;
 	while ((at = stream.data[stream.index]) && at[0] < want) {
-            transaction = {time:at[0], request:at[2], client:at[3], server:at[4]}
+            transaction = {time:at[0], request:at[dimensionIndex], client:at[1], server:at[2]}
             callback(transaction);
             stream.index += 1;
 	}
@@ -166,11 +167,11 @@ function initTraffic(div) {
     });
 }
 
-function updateTraffic(error, json, div) {
+function updateTraffic(error, json, div, dimensionIndex) {
     if(error) {
         readout(error);
     } else {
         var now = new Date().getTime();
-        div.node().stream = {start: now, wall: now, sleep: 0, first: json[0][0], last: json[json.length-1][0], index: 0, data: json,};
+        div.node().stream = {dimension: dimensionIndex, start: now, wall: now, sleep: 0, first: json[0][0], last: json[json.length-1][0], index: 0, data: json};
     }
 }

@@ -32,8 +32,9 @@
        d3.json("/data/filtered/"+$data.file + "?" +
         "only=" + $data.only + "&" +
         "filter=" + $data.filter, function(error, json) {
-         json.shift(); // remove the header row
-         updateTraffic(error, json, d3.select("#display"));
+         header = json.shift(); // remove the header row
+         dimensionIndex = header.indexOf($data.primary_dim);
+         updateTraffic(error, json, d3.select("#display"), dimensionIndex);
        });
   });
 
