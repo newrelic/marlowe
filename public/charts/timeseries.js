@@ -17,7 +17,7 @@ function timeseries(div) {
 
     var xScale = d3.time.scale().rangeRound([0, $data.width]),
     yScale = d3.scale.linear().rangeRound([$data.height, 0]),
-    apdexScale = d3.scale.linear().rangeRound([$data.height, 0]).domain([0, 1]),
+    apdexScale = d3.scale.linear().rangeRound([$data.height, 0]).domain([0.5, 1]),
     colorScale = d3.interpolateRgb("#fff", "#000"),
     throughputScale = d3.scale.linear().range([$data.height, 50]),
     legendPlots = [];
