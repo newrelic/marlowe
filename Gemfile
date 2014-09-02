@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '1.9.3'
+ruby '2.1.1'
 gem "sinatra"
 gem "sinatra-contrib"
 gem "rdiscount"
@@ -8,5 +8,5 @@ gem "rack-cache"
 gem "thin"
 gem "json"
 gem "haml"
-
+gem "awesome_print"
 gem "rspec"
