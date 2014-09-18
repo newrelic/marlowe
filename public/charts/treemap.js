@@ -21,21 +21,21 @@ function valueMethod() {
     var row = $data.selectedBucket;
     var col = $data.selectedTimeslice; 
     if (row >= 0 && col >= 0) {
-	return function(d) { return d.map[[col,row]] };
+        return function(d) { return d.map[[col,row]] };
     } else if (col >= 0) {
-	return function(d) { return d.row[col] };
+        return function(d) { return d.row[col] };
     } else if (row >= 0) {
-	return function(d) { return d.bars[row] };
+        return function(d) { return d.bars[row] };
     } else {
-	return function(d) { return d.count }
+        return function(d) { return d.count }
     }
 }
 
 function treemapUpdate(div) {
     var treemap = d3.layout.treemap()
-	.size([2 * $data.width, $data.height])
-	.sticky(true)
-	.value(function(d) { return d['time']+10000; });
+        .size([2 * $data.width, $data.height])
+        .sticky(true)
+        .value(function(d) { return d['time']+10000; });
     var color = d3.scale.category20c();
     var value = valueMethod();
 

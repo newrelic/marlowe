@@ -9,42 +9,42 @@ function initTraffic(div) {
     color = d3.scale.category10();
 
     function readout(text) {
-	d3.select("#readout").text(text);
+        d3.select("#readout").text(text);
     }
 
     var nodes = [];
     var force = d3.layout.force()
-	.nodes(nodes)
-	.size([width, height])
-	.gravity(0)
-	.friction(.6)
-	.charge(0)
-	.on("tick", tick)
-	.start();
+        .nodes(nodes)
+        .size([width, height])
+        .gravity(0)
+        .friction(.6)
+        .charge(0)
+        .on("tick", tick)
+        .start();
 
     var svg = div.append("svg")
-	.attr("width", width + margin.left + margin.right)
-	.attr("height", height + margin.top + margin.bottom)
-	.append("g")
-	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var circle = svg.selectAll("circle")
-	.data(nodes, function(d) { return d.id;})
-	.enter().append("circle")
-	.attr("r", function(d) { return d.radius; })
-	.style("fill", function(d) { return d.color; })
-	.call(force.drag);
+        .data(nodes, function(d) { return d.id;})
+        .enter().append("circle")
+        .attr("r", function(d) { return d.radius; })
+        .style("fill", function(d) { return d.color; })
+        .call(force.drag);
 
     // Update dom as transactions come and go
     var id = 0;
     function tick(e) {
-	var now = new Date().getTime();
-	for (var i = nodes.length - 1; i >= 0; i--) {
+        var now = new Date().getTime();
+        for (var i = nodes.length - 1; i >= 0; i--) {
             if (finished(nodes[i],now)) {
-		nodes.splice(i,1)
+                nodes.splice(i,1)
             }
-	};
-	playnext(function(arrival){
+        };
+        playnext(function(arrival){
             readout(new Date(arrival.time).toTimeString().split(" ")[0]+" "+arrival.request);
             arrival.id = id++;
             arrival.radius = radius(transaction.server);
@@ -53,103 +53,103 @@ function initTraffic(div) {
             arrival.cy = arrival.y = height / 2 + Math.random()*30;
             arrival.start = now;
             nodes.push(arrival);
-	});
+        });
 
-	var circle = svg.selectAll("circle")
+        var circle = svg.selectAll("circle")
             .data(nodes, function(d) { return d.id;});
 
-	circle
+        circle
             .enter().append("circle")
             .attr("cx", function(d) { return d.x; })
             .attr("cy", function(d) { return d.y; })
             .attr("r", function(d) { return d.radius; })
             .style("fill", function(d) { return d.color; });
 
-	circle
+        circle
             .exit().remove();
 
-	circle
+        circle
             .each(gravity(.2 * e.alpha))
-		.each(collide(.5))
-		    .attr("cx", function(d) { return d.x; })
+                .each(collide(.5))
+                    .attr("cx", function(d) { return d.x; })
             .attr("cy", function(d) { return d.y; });
-	force.start();
+        force.start();
     }
 
     // Move nodes toward cluster focus.
     function gravity(alpha) {
-	return function(d) {
+        return function(d) {
             d.y += (d.cy - d.y) * alpha;
             var now = new Date().getTime(); 
             // Add a 200ms to ensure the circle makes it all the way across
             var pos = width * Math.min(1, (now + 200 - d.start)/d.client);
             d.x += (pos - d.x) * alpha;
-	};
+        };
     }
 
     // Resolve collisions between nodes.
     function collide(alpha) {
-	var quadtree = d3.geom.quadtree(nodes);
-	return function(d) {
+        var quadtree = d3.geom.quadtree(nodes);
+        return function(d) {
             var r = d.radius + radius.domain()[1] + padding,
             nx1 = d.x - r,
             nx2 = d.x + r,
             ny1 = d.y - r,
             ny2 = d.y + r;
             quadtree.visit(function(quad, x1, y1, x2, y2) {
-		if (quad.point && (quad.point !== d)) {
-		    var x = d.x - quad.point.x,
+                if (quad.point && (quad.point !== d)) {
+                    var x = d.x - quad.point.x,
                     y = d.y - quad.point.y,
                     l = Math.sqrt(x * x + y * y),
                     r = d.radius + quad.point.radius + (d.color !== quad.point.color) * padding;
-		    if (l < r) {
-			l = (l - r) / l * alpha;
-			d.x -= x *= l;
-			d.y -= y *= l;
-			quad.point.x += x;
-			quad.point.y += y;
-		    }
-		}
-		return x1 > nx2
-		    || x2 < nx1
-		    || y1 > ny2
-		    || y2 < ny1;
+                    if (l < r) {
+                        l = (l - r) / l * alpha;
+                        d.x -= x *= l;
+                        d.y -= y *= l;
+                        quad.point.x += x;
+                        quad.point.y += y;
+                    }
+                }
+                return x1 > nx2
+                    || x2 < nx1
+                    || y1 > ny2
+                    || y2 < ny1;
             });
-	};
+        };
     }
 
     // Stream over transaction dataset delivering entry events by callback
 
     function finished (transaction, now) {
-	return transaction.start + (transaction.client||3000) + div.node().stream.sleep < now 
+        return transaction.start + (transaction.client||3000) + div.node().stream.sleep < now 
     }
 
     function playnext (callback) {
         var stream = div.node().stream;
-	if (stream == null) {
+        if (stream == null) {
             return;
-	}
+        }
         var dimensionIndex = stream['dimension'];
-	var now = new Date().getTime();
-	var delay = now - stream.wall;
+        var now = new Date().getTime();
+        var delay = now - stream.wall;
         if (t = stream.data[stream.index]) {
            $data.dispatch.tick(t[0]);
         }
-	stream.wall = now;
-	if (delay > 1000) {
+        stream.wall = now;
+        if (delay > 1000) {
             // must have been sleeping without timer events
             stream.sleep += delay;
-	}
-	var want = now - stream.start + stream.first - stream.sleep;
-	while ((at = stream.data[stream.index]) && at[0] < want) {
+        }
+        var want = now - stream.start + stream.first - stream.sleep;
+        while ((at = stream.data[stream.index]) && at[0] < want) {
             transaction = {time:at[0], request:at[dimensionIndex], client:at[1], server:at[2]}
             callback(transaction);
             stream.index += 1;
-	}
-	if (nodes.length == 0 && want > stream.last) {
+        }
+        if (nodes.length == 0 && want > stream.last) {
             stream.wall = stream.start = now;
             stream.sleep = stream.index = 0;
-	}
+        }
     }
 
     $data.dispatch.on("timerangeSelect.traffic", function(col) {

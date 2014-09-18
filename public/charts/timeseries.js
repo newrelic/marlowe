@@ -1,15 +1,15 @@
 function timeseries(div) {
 
     var svg = div.append("svg")
-	.attr("id", "timeseries")
+        .attr("id", "timeseries")
         .attr("width", $data.width + $data.margin.left + $data.margin.right)
         .attr("height", $data.height + $data.margin.top + $data.margin.bottom);
 
     svg.append("defs").append("clipPath")
-	.attr("id", "plotclip")
-	.append("rect")
-	.attr("width", $data.width)
-	.attr("height", $data.height);
+        .attr("id", "plotclip")
+        .append("rect")
+        .attr("width", $data.width)
+        .attr("height", $data.height);
 
     svg.append("g")
         .attr("class", "grid")
@@ -32,13 +32,13 @@ function timeseries(div) {
     var chart = svg.select("g");
 
     chart
-	.append("g").attr("class", "heatmap")
-	.attr("clip-path", "url(#plotclip)")
+        .append("g").attr("class", "heatmap")
+        .attr("clip-path", "url(#plotclip)")
 
     var quartilesPlot = chart.append("g").attr("class", "quartiles");
 
     $data.dispatch.on("quartileSelect.timeseries", function() {
-	svg.quartileSelectionUpdate();
+        svg.quartileSelectionUpdate();
     });
 
     // The rectangle for capturing drag events.
@@ -63,165 +63,165 @@ function timeseries(div) {
         .call(apdexAxis);
 
     chart.append("g")
-	.attr("clip-path", "url(#plotclip)")
+        .attr("clip-path", "url(#plotclip)")
         .attr("class", "plots");
 
     $data.dispatch.on("plotSelect.timeseries", function(name) {
-	updateLines();
+        updateLines();
     });
 
     $data.dispatch.on("newTimesliceData.timeseries", function() {
-	svg.update();
-	d3.select("img.timeseries.busy").style("display", "none");
+        svg.update();
+        d3.select("img.timeseries.busy").style("display", "none");
     });
 
     svg.legend = function(legendNames) {
         svg.attr("height", $data.height + $data.margin.top + $data.margin.bottom + 60);
-	legendPlots = legendNames;
-	var legendItemWidth = Math.floor($data.width / (legendPlots.length + 1)),
-	legendItemHeight = 42,
-	margin = 4;
+        legendPlots = legendNames;
+        var legendItemWidth = Math.floor($data.width / (legendPlots.length + 1)),
+        legendItemHeight = 42,
+        margin = 4;
 
-	var legend = chart.append("g")
+        var legend = chart.append("g")
             .attr("class", "legend")
             .attr("transform", "translate(0," + ($data.height + $data.margin.top + 20) + ")");
 
-	legend.selectAll("g.timeseries")
+        legend.selectAll("g.timeseries")
             .data(legendPlots, String);
 
-	g = legend.append("g")
+        g = legend.append("g")
             .attr("class", "heatmap")
             .attr("transform", "translate(" + margin + ",0)");
 
-	g.append("rect")
+        g.append("rect")
             .attr("class", "legenditem")
             .attr("x", -margin)
             .attr("y", -margin)
             .attr("width", legendItemWidth)
             .attr("height", legendItemHeight)
             .on("click", function(d) {
-		svg.heatmap(!showHeatmap);
+                svg.heatmap(!showHeatmap);
             });
 
-	g.append("text")
+        g.append("text")
             .attr("dy", "1.2em")
             .attr("class", "legend")
             .text("heatmap")
             .on("click", function(d) {
-		svg.heatmap(!showHeatmap);
+                svg.heatmap(!showHeatmap);
             });
 
-	g.append("rect")
+        g.append("rect")
             .attr("id", "heatmap-sample")
             .attr("y", legendItemHeight/2)
             .attr("width", legendItemWidth - (2 * margin))
             .attr("height", legendItemHeight / 4)
             .style("opacity", showHeatmap ? 1 : 0.2)
             .attr("fill", colorScale(0.5));
-	
+        
 
-	// Timeseries items (mean, median, exc) legend items
-	g = legend.selectAll("g.timeseries")
+        // Timeseries items (mean, median, exc) legend items
+        g = legend.selectAll("g.timeseries")
             .data(legendPlots, String)
             .enter()
             .append("g")
             .attr("class", "timeseries")
             .attr("transform", function(d, i) {
-		return "translate(" + (2 * margin + ((i+1) * legendItemWidth)) + ",0)";
+                return "translate(" + (2 * margin + ((i+1) * legendItemWidth)) + ",0)";
             });
 
-	g.append("rect")
+        g.append("rect")
             .attr("class", "legenditem")
             .attr("x", -margin)
             .attr("y", -margin)
             .attr("width", legendItemWidth - margin)
             .attr("height", legendItemHeight)
             .on("click", function(d) {
-		togglePlotline(d);
+                togglePlotline(d);
             });
 
-	g.append("text")
+        g.append("text")
             .attr("dy", "1.2em")
             .text(function(d){ return d.replace("_"," ") })
             .on("click", function(d) {
-		togglePlotline(d);
+                togglePlotline(d);
             });
 
-	g.append("line")
+        g.append("line")
             .style("opacity", "0")
             .attr("class", function(d) { return d+" series"; })
             .attr("transform", "translate(0, "+ ((legendItemHeight - margin) * 2 / 3)+")")
             .attr("x2", legendItemWidth - (3 * margin))
             .on("click", function(d) {
-		togglePlotline(d);
+                togglePlotline(d);
             });
         return svg;
     };
 
     svg.timeline = function() {  
-	var timeline = chart.append("g");
-	timeline
-	    .append("line")
-	    .attr("y1", 0).attr("y2", $data.height)
-	    .attr("x1", 0).attr("x2", 0)
-	    .attr("id", "time-marker");
+        var timeline = chart.append("g");
+        timeline
+            .append("line")
+            .attr("y1", 0).attr("y2", $data.height)
+            .attr("x1", 0).attr("x2", 0)
+            .attr("id", "time-marker");
 
-	$data.dispatch.on("tick.timeseries", function(t) {
-	    var d = new Date(t);
-	    var pos = x(t);
-	    timeline.attr("transform", "translate("+x(t)+", 0)");
-	});
+        $data.dispatch.on("tick.timeseries", function(t) {
+            var d = new Date(t);
+            var pos = x(t);
+            timeline.attr("transform", "translate("+x(t)+", 0)");
+        });
         return svg;
     };
 
     updateLines = function() {
-	var apdex = apdexScale;
-	x.domain(d3.extent($data.timeslices, function(d) { return d.time; }));
-	svg.select("g.legend").selectAll("g.timeseries").data(legendPlots, String).select("line")
+        var apdex = apdexScale;
+        x.domain(d3.extent($data.timeslices, function(d) { return d.time; }));
+        svg.select("g.legend").selectAll("g.timeseries").data(legendPlots, String).select("line")
             .transition().duration(500)
             .style("opacity", function(d) {
-		return $data.displayedPlots.indexOf(d) >= 0 ? "1" : "0";
+                return $data.displayedPlots.indexOf(d) >= 0 ? "1" : "0";
             });
 
-	// function to generate the path points for a plot
-	function plotData(m) {
+        // function to generate the path points for a plot
+        function plotData(m) {
             d = [];
             var axis = y;
             if (m == "apdex") 
-		axis = apdex;
+                axis = apdex;
             else if (m == "rpm")
-		axis = throughputScale;      
+                axis = throughputScale;      
 
             for (i = 0; i < $data.timeslices.length; i++) {
-		d[i] = { time: x($data.timeslices[i].time), val: axis($data.timeslices[i][m]) };
+                d[i] = { time: x($data.timeslices[i].time), val: axis($data.timeslices[i][m]) };
             }
             return d;
-	}
-	function firstPlotLine() {
+        }
+        function firstPlotLine() {
             m = $data.displayedPlots[0];
             var axis = y;
             if (m == "apdex") axis = apdex;
             return d3.svg.line()
-		.interpolate("basis")
-		.x(function(q) { return q.time; })
-		.y(function(q,i) { return axis($data.timeslices[i][m]); })
-	};
-	function seriesPlotLine() {
+                .interpolate("basis")
+                .x(function(q) { return q.time; })
+                .y(function(q,i) { return axis($data.timeslices[i][m]); })
+        };
+        function seriesPlotLine() {
             return d3.svg.line()
-		.interpolate("basis")
-		.x(function(q) { return q.time; })
-		.y(function(q,i) { return q.val; })
-	};
-	var lines = svg.select("g.plots").selectAll("g").data($data.displayedPlots, String);
+                .interpolate("basis")
+                .x(function(q) { return q.time; })
+                .y(function(q,i) { return q.val; })
+        };
+        var lines = svg.select("g.plots").selectAll("g").data($data.displayedPlots, String);
 
-	lines
+        lines
             .select("path")
             .datum(plotData)
             .transition()
-	    .duration(500)
+            .duration(500)
             .attr("d", seriesPlotLine());
 
-	lines.enter()
+        lines.enter()
             .append("g")
             .append("path")       
             .attr("class", function(d) {return "series "+d;})
@@ -231,81 +231,81 @@ function timeseries(div) {
             .transition().duration(500)
             .style("opacity", 1)
             .attr("d", seriesPlotLine());
-	
-	var exit = lines.exit();
-	var v = exit.select("path")
+        
+        var exit = lines.exit();
+        var v = exit.select("path")
             .datum(plotData)
             .transition().duration(200)
             .style("opacity", 1e-6)
-	exit.transition().delay(500).remove();
-	svg.quartileSelectionUpdate();
+        exit.transition().delay(500).remove();
+        svg.quartileSelectionUpdate();
     };
 
     svg.quartileSelectionUpdate = function() {
-	function boxplot(v) {
-	    var numCols = Math.floor($data.density * ($data.width / $data.height)),
-   	    colWidth = $data.width / (numCols - 1 );
+        function boxplot(v) {
+            var numCols = Math.floor($data.density * ($data.width / $data.height)),
+            colWidth = $data.width / (numCols - 1 );
 
-	    v
+            v
                 .attr("class", $data.selectedQuartile)
-		.transition()
-		.attr("transform", function(d, i) {
-		    return "translate(" + (( i - 0.5) * colWidth) + ","+y(d.y0)+")";
-		})
-		.attr("height", function(d) { return y(d.y1) - y(d.y0) });
+                .transition()
+                .attr("transform", function(d, i) {
+                    return "translate(" + (( i - 0.5) * colWidth) + ","+y(d.y0)+")";
+                })
+                .attr("height", function(d) { return y(d.y1) - y(d.y0) });
 
-	    v.enter()
-		.append("rect")
-		.attr("class", $data.selectedQuartile)
-		.attr("width", colWidth - 1)
-		.attr("transform", function(d, i) {
-		    return "translate(" + (( i - 0.5) * colWidth) + ","+y(d.mid)+")";
-		})
-	        .attr("height", 0)
-	        .transition()
-		.attr("transform", function(d, i) {
-		    return "translate(" + (( i - 0.5) * colWidth) + ","+y(d.y0)+")";
-		})
-		.attr("height", function(d) { return y(d.y1) - y(d.y0) });
+            v.enter()
+                .append("rect")
+                .attr("class", $data.selectedQuartile)
+                .attr("width", colWidth - 1)
+                .attr("transform", function(d, i) {
+                    return "translate(" + (( i - 0.5) * colWidth) + ","+y(d.mid)+")";
+                })
+                .attr("height", 0)
+                .transition()
+                .attr("transform", function(d, i) {
+                    return "translate(" + (( i - 0.5) * colWidth) + ","+y(d.y0)+")";
+                })
+                .attr("height", function(d) { return y(d.y1) - y(d.y0) });
 
-	    v.exit()
-	        .transition()
-		.attr("transform", function(d, i) {
-		    return "translate(" + (( i - 0.5) * colWidth) + ","+y(d.mid)+")";
-		})
-	        .attr("height", 0)
-		.remove();
-	}
-	if ($data.selectedQuartile == "arithmetic")
-	    data = $data.timeslices.map(function(timeslice) {
-		return { "y0": timeslice.mean + (z75 * timeslice.stddev),
-			 "y1": timeslice.mean - (z75 * timeslice.stddev),
-			 "mid": timeslice.mean,
-			 "style": "arithmetic"}
+            v.exit()
+                .transition()
+                .attr("transform", function(d, i) {
+                    return "translate(" + (( i - 0.5) * colWidth) + ","+y(d.mid)+")";
+                })
+                .attr("height", 0)
+                .remove();
+        }
+        if ($data.selectedQuartile == "arithmetic")
+            data = $data.timeslices.map(function(timeslice) {
+                return { "y0": timeslice.mean + (z75 * timeslice.stddev),
+                         "y1": timeslice.mean - (z75 * timeslice.stddev),
+                         "mid": timeslice.mean,
+                         "style": "arithmetic"}
             });
-	else if ($data.selectedQuartile == "geometric") 
-	    data = $data.timeslices.map(function(timeslice) {
-		return { "y0": timeslice.g_mean * Math.pow(timeslice.g_stddev, z75),
-			 "y1": timeslice.g_mean / Math.pow(timeslice.g_stddev, z75),
-			 "mid": timeslice.g_mean,
-			 "style": "geometric"}
-	    });
-	else if ($data.selectedQuartile == "actual") 
-	    data = $data.timeslices.map(function(timeslice) {
-		return { "y0": timeslice.pct_75,
-			 "y1": timeslice.pct_25,
-			 "mid": timeslice.median,
-			 "style": "actual"}
-	    });
-	else data = []
-	quartilesPlot.selectAll("rect").data(data).call(boxplot);
-	return svg;
+        else if ($data.selectedQuartile == "geometric") 
+            data = $data.timeslices.map(function(timeslice) {
+                return { "y0": timeslice.g_mean * Math.pow(timeslice.g_stddev, z75),
+                         "y1": timeslice.g_mean / Math.pow(timeslice.g_stddev, z75),
+                         "mid": timeslice.g_mean,
+                         "style": "geometric"}
+            });
+        else if ($data.selectedQuartile == "actual") 
+            data = $data.timeslices.map(function(timeslice) {
+                return { "y0": timeslice.pct_75,
+                         "y1": timeslice.pct_25,
+                         "mid": timeslice.median,
+                         "style": "actual"}
+            });
+        else data = []
+        quartilesPlot.selectAll("rect").data(data).call(boxplot);
+        return svg;
     };
 
     svg.heatmap = function(enable) {
         d3.select("img.timeseries.busy").style("display", "inline");
         var rect = svg.select("#heatmap-sample");
-	showHeatmap = enable;
+        showHeatmap = enable;
         if (showHeatmap)
             rect.transition().duration(250).style("opacity", 1);
         else
@@ -316,90 +316,90 @@ function timeseries(div) {
     }
 
     svg.update = function() {
-	y.domain([0, $data.yMax]);
-	x.domain(d3.extent($data.timeslices, function(d) { return d.time; }));
-	throughputScale.domain([0, d3.max($data.timeslices.map(function(d){return d.rpm}))]);
+        y.domain([0, $data.yMax]);
+        x.domain(d3.extent($data.timeslices, function(d) { return d.time; }));
+        throughputScale.domain([0, d3.max($data.timeslices.map(function(d){return d.rpm}))]);
 
-	var xAxis = d3.svg.axis()
+        var xAxis = d3.svg.axis()
             .scale(x)
             .orient("bottom");
 
-	svg.select("g.x.axis").call(xAxis);
+        svg.select("g.x.axis").call(xAxis);
 
-	var yAxis = d3.svg.axis()
+        var yAxis = d3.svg.axis()
             .scale(y)
             .orient("left");
 
-	svg.select("g.y.axis").call(yAxis);
+        svg.select("g.y.axis").call(yAxis);
 
-	var numRows = Math.floor($data.density),
-	numCols = Math.floor($data.density * ($data.width / $data.height)),
-	yExtent, 
-	xExtent,
-	colWidth = $data.width / numCols,
-	rowHeight = $data.height / numRows;
-	var heatmap = svg.select("g.heatmap");
+        var numRows = Math.floor($data.density),
+        numCols = Math.floor($data.density * ($data.width / $data.height)),
+        yExtent, 
+        xExtent,
+        colWidth = $data.width / numCols,
+        rowHeight = $data.height / numRows;
+        var heatmap = svg.select("g.heatmap");
 
-	var cellWidth = $data.width / (numCols - 1);
-	var cellHeight = $data.height / numRows;
+        var cellWidth = $data.width / (numCols - 1);
+        var cellHeight = $data.height / numRows;
 
-	var drag = d3.behavior.drag()
+        var drag = d3.behavior.drag()
             .on("drag", dragmove);
 
-	function dragmove() {
+        function dragmove() {
             var xPos = d3.event.x;
             var col = Math.min(Math.floor(xPos / cellWidth), $data.timeslices.length-1);
             if (col != $data.selectedTimeslice) {
-		$data.selectedTimeslice = col;
-		$data.dispatch.timerangeSelect(col);
+                $data.selectedTimeslice = col;
+                $data.dispatch.timerangeSelect(col);
             }
-	}
-	svg.select("rect.clickrect").on("click", dragmove).call(drag);
+        }
+        svg.select("rect.clickrect").on("click", dragmove).call(drag);
 
-	if (showHeatmap)
+        if (showHeatmap)
             data = $data.timeslices;
-	else
+        else
             data = [];
 
-	var bar = heatmap.selectAll("g").data(data);
-	var cellInterval = (x.domain()[1] - x.domain()[0]) / (numCols - 1);
+        var bar = heatmap.selectAll("g").data(data);
+        var cellInterval = (x.domain()[1] - x.domain()[0]) / (numCols - 1);
 
-	bar.enter()
+        bar.enter()
             .append("g")
-	bar
+        bar
             .attr("transform", function(d, i) {
-		return "translate("+(x(d.time - cellInterval/2))+", 0)";
+                return "translate("+(x(d.time - cellInterval/2))+", 0)";
             });
 
-	bar.exit()
+        bar.exit()
             .remove();
 
-	var rect = bar.selectAll("rect")
+        var rect = bar.selectAll("rect")
             .data(function(d, i){ 
-		return d.hist; 
+                return d.hist; 
             });
 
-	rect.enter()
+        rect.enter()
             .append("rect")
             .attr("class", "cell")
             .attr("x", 0);
-	rect
+        rect
             .attr("width", Math.round(cellWidth))
             .attr("height", Math.round(cellHeight))
             .attr("y", function(d, i) { 
-		return Math.round((numRows - i - 1) * rowHeight); 
+                return Math.round((numRows - i - 1) * rowHeight); 
             })
             .attr("fill", function(d) { 
-		return colorScale(d.score);
-	    })
+                return colorScale(d.score);
+            })
             .style("opacity", 1)
 
-	rect.exit()
+        rect.exit()
             .style("opacity", 0)
             .remove();
 
-	updateLines();
-	return svg;
+        updateLines();
+        return svg;
     };
     return svg;
 };

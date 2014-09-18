@@ -36,7 +36,7 @@ function histogram(div) {
                                                         { "label": "actual quartile", "class": "actual" },
                                                         { "label": "geom. quartile", "class": "geometric" },
                                                         { "label": "arith. quartile", "class": "arithmetic" }])
-	.enter()
+        .enter()
         .append("g").attr("transform", function(d,i) { 
             return "translate("+(i*120)+","+(30 + $data.margin.top + $data.height)+")" 
         });
@@ -54,115 +54,115 @@ function histogram(div) {
         .style("position", "relative")
         .style("bottom", "120px")
         .style("left", $data.width + "px")
-	.append("span")
-	.style("font-size", "18px")
-	.style("padding", "8px")
-	.attr("class", "outliers label");
+        .append("span")
+        .style("font-size", "18px")
+        .style("padding", "8px")
+        .attr("class", "outliers label");
 
     $data.dispatch.on("plotSelect.histogram", function(name) {
-	updateLines();
+        updateLines();
     });
     $data.dispatch.on("quartileSelect.histogram", function(name) {
-	updateLines();
+        updateLines();
     })
     $data.dispatch.on("timerangeSelect.histogram", function() {
-	var col;
-	if ($data.selectedTimeslice == -1)
-	    col = $data.summaryTimeslice;
-	else
-	    col = $data.timeslices[$data.selectedTimeslice];
-	update(col);
-	d3.select("img.histogram.busy").style("display", "none");
+        var col;
+        if ($data.selectedTimeslice == -1)
+            col = $data.summaryTimeslice;
+        else
+            col = $data.timeslices[$data.selectedTimeslice];
+        update(col);
+        d3.select("img.histogram.busy").style("display", "none");
     });
 
     $data.dispatch.on("newTimesliceData", function() {
-	update($data.summaryTimeslice);
-	d3.select("img.histogram.busy").style("display", "none");
+        update($data.summaryTimeslice);
+        d3.select("img.histogram.busy").style("display", "none");
     });
 
     div.enableBucketSelection = function() {
 
-	function dragmove() {
+        function dragmove() {
             var xPos = d3.event.x;
-	    console.info(xPos);
+            console.info(xPos);
             var col = Math.floor(bars.invert(xPos));
             if (col != $data.selectedBucket) {
-		$data.selectedBucket = col;
-		$data.dispatch.bucketSelect(col); 
-	    }
-	};
-	var drag = d3.behavior.drag().on("drag", dragmove);
+                $data.selectedBucket = col;
+                $data.dispatch.bucketSelect(col); 
+            }
+        };
+        var drag = d3.behavior.drag().on("drag", dragmove);
 
-	chart.append("rect")
-	    .attr("class", "clickrect")
+        chart.append("rect")
+            .attr("class", "clickrect")
             .attr("opacity", 1e-6)
             .style("fill", "#EEE")
             .attr("width", $data.width)
             .attr("height", $data.height)
             .on("click", dragmove)
-	    .call(drag);
+            .call(drag);
     }
 
     function update(bucket) {
-	var counts = bucket.hist;
+        var counts = bucket.hist;
 
-	x.domain([0, $data.yMax]);
-	y.domain([0, Math.max($data.bucketMax, bucket.bucket_max)]);
+        x.domain([0, $data.yMax]);
+        y.domain([0, Math.max($data.bucketMax, bucket.bucket_max)]);
 
-	bars.domain([0, counts.length]);
+        bars.domain([0, counts.length]);
 
-	var yAxis = d3.svg.axis()
+        var yAxis = d3.svg.axis()
             .scale(y)
             .orient("left");
-	svg.select("g.y.axis").transition().duration(250).call(yAxis);
+        svg.select("g.y.axis").transition().duration(250).call(yAxis);
 
-	var xAxis = d3.svg.axis()
+        var xAxis = d3.svg.axis()
             .scale(x)
             .orient("bottom");
-	svg.select("g.x.axis")
+        svg.select("g.x.axis")
             .call(xAxis);
 
-	var bar = svg.select("g.bars").selectAll("rect").data(counts);
-	bar.enter().append("rect");
-	bar
+        var bar = svg.select("g.bars").selectAll("rect").data(counts);
+        bar.enter().append("rect");
+        bar
             .attr("width", bars(1))
             .attr("x", function(d, i) { return bars(i); })
             .transition().duration(250)
             .attr("y", function(d) {return y(d.count);})
             .attr("height", function(d) { 
-		return $data.height - y(d.count); 
-	    });
-	bar.exit().remove();
-	updateLines();
-	// Update the outliers text
-	div.select("span.outliers")
-	    .text(Math.round(1000 * bucket.outliers.count / bucket.count)/10.0 + "% > "+ $data.yMax);
+                return $data.height - y(d.count); 
+            });
+        bar.exit().remove();
+        updateLines();
+        // Update the outliers text
+        div.select("span.outliers")
+            .text(Math.round(1000 * bucket.outliers.count / bucket.count)/10.0 + "% > "+ $data.yMax);
     }
 
     function updateLines() {
-	var dataset;
-	if ($data.selectedTimeslice == -1)
-	    dataset = $data.summaryTimeslice;
-	else
-	    dataset = $data.timeslices[$data.selectedTimeslice];
+        var dataset;
+        if ($data.selectedTimeslice == -1)
+            dataset = $data.summaryTimeslice;
+        else
+            dataset = $data.timeslices[$data.selectedTimeslice];
 
-	// remove apdex and rpm since they aren't response times
-	var plots = $data.displayedPlots.concat([]);
-	var index = plots.indexOf("apdex");
-	if (index >= 0) plots.splice(index, 1);    
-	index = plots.indexOf("rpm");
-	if (index >= 0) plots.splice(index, 1);
+        // remove apdex and rpm since they aren't response times
+        var plots = $data.displayedPlots.concat([]);
+        var index = plots.indexOf("apdex");
+        if (index >= 0) plots.splice(index, 1);    
+        index = plots.indexOf("rpm");
+        if (index >= 0) plots.splice(index, 1);
 
-	var plots = svg.select("g.plots").selectAll("line").data(plots, String);
+        var plots = svg.select("g.plots").selectAll("line").data(plots, String);
 
-	plots
+        plots
             .attr("y1", 0)
             .attr("y2", $data.height)
             .transition()
             .attr("x1", function(d) { return x(dataset[d]); })
             .attr("x2", function(d) { return x(dataset[d]); })
-	
-	plots.enter()
+        
+        plots.enter()
             .append("line")
             .attr("class", function(d) { return "series "+d;})
             .attr("x1", function(d) { return x(dataset[d]); })
@@ -175,38 +175,38 @@ function histogram(div) {
             .style("stroke-width", 4)
             .style("opacity", 1);
 
-	plots.exit()
+        plots.exit()
             .transition()
             .style("opacity", 1e-06)
             .remove();
 
-	svg.select("g.bars").selectAll("rect")
+        svg.select("g.bars").selectAll("rect")
             .attr("class", function(d, i) { 
-		var upperQuartile, lowerQuartile;
-		var timeslice = $data.selectedTimeslice == -1 ? $data.summaryTimeslice : $data.timeslices[$data.selectedTimeslice];
-		if ($data.selectedQuartile == "arithmetic") {
-		    lowerQuartile = timeslice.mean - ( z75 * timeslice.stddev );
-		    upperQuartile = timeslice.mean + ( z75 * timeslice.stddev );
-		} else if ($data.selectedQuartile == "geometric") {
-		    lowerQuartile = timeslice.g_mean / Math.pow(timeslice.g_stddev, z75);
-		    upperQuartile = timeslice.g_mean * Math.pow(timeslice.g_stddev, z75);
-		} else if ($data.selectedQuartile == "actual") {
-		    lowerQuartile = timeslice.pct_25;
-		    upperQuartile = timeslice.pct_75;
-		}
-		var lowerBound = x.invert(bars(i));
-		var upperBound = x.invert(bars(i+1));
-		if ($data.selectedQuartile) {
-		    if (upperBound >= lowerQuartile && lowerBound <= upperQuartile)
-			return $data.selectedQuartile;
-		    else
-			return "bar apdex_s";
-		}
-		else if ($data.displayedPlots.indexOf("apdex") == -1 || lowerBound < $data.apdex_t) 
+                var upperQuartile, lowerQuartile;
+                var timeslice = $data.selectedTimeslice == -1 ? $data.summaryTimeslice : $data.timeslices[$data.selectedTimeslice];
+                if ($data.selectedQuartile == "arithmetic") {
+                    lowerQuartile = timeslice.mean - ( z75 * timeslice.stddev );
+                    upperQuartile = timeslice.mean + ( z75 * timeslice.stddev );
+                } else if ($data.selectedQuartile == "geometric") {
+                    lowerQuartile = timeslice.g_mean / Math.pow(timeslice.g_stddev, z75);
+                    upperQuartile = timeslice.g_mean * Math.pow(timeslice.g_stddev, z75);
+                } else if ($data.selectedQuartile == "actual") {
+                    lowerQuartile = timeslice.pct_25;
+                    upperQuartile = timeslice.pct_75;
+                }
+                var lowerBound = x.invert(bars(i));
+                var upperBound = x.invert(bars(i+1));
+                if ($data.selectedQuartile) {
+                    if (upperBound >= lowerQuartile && lowerBound <= upperQuartile)
+                        return $data.selectedQuartile;
+                    else
+                        return "bar apdex_s";
+                }
+                else if ($data.displayedPlots.indexOf("apdex") == -1 || lowerBound < $data.apdex_t) 
                     return "bar apdex_s";
-		else if (upperBound >= 4 * $data.apdex_t)
+                else if (upperBound >= 4 * $data.apdex_t)
                     return "bar apdex_f";
-		else 
+                else 
                     return "bar apdex_t";
             })
 
