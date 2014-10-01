@@ -31,6 +31,11 @@
 
 function summary(div) {
     var summaryItems = []
+    helptext = div.append("p")
+    helptext.append("span").text("Click on a ")
+    helptext.append("span").attr("class", "label").text("heading")
+    helptext.append("span").text(" to toggle plots on and off.")
+
     div.row = function() {
         var row = [];
         summaryItems.push(row);
@@ -55,7 +60,6 @@ function summary(div) {
             .append("div")
             .attr("class", "summary-item")
             .on("click", function(v){ togglePlotline(v[1]);})
-
         items
             .append("div")
             .attr("class", function(v) { return "bg "+v[1] });
@@ -72,7 +76,7 @@ function summary(div) {
             .attr("class", function(v){ return v[1]+ " series" })
             .style("opacity", function(v) {
                 return $data.displayedPlots.indexOf(v[1]) >= 0 ? "1" : "0" })
-            .attr("x2", 300)
+            .attr("x2", 120)
             .attr("y1", 6)
             .attr("y2", 6);
 
