@@ -10,7 +10,7 @@ animations.  I welcome contributions.
 Requirements
 ---------------
 
-1. Ruby 1.9.3
+1. Ruby 2.1.1
 2. Smattering of ruby gems, including Sinatra, Rack
 
 Running the Tool
@@ -34,7 +34,7 @@ Just add json files to the data directory using the following format:
      ....
 
 The columns can be in any order, but must include `timestamp`, `transaction` and one of
-`frontend` or `backennd`.  They can include additional per-event dimensions which may be
+`frontend` or `backend`.  They can include additional per-event dimensions which may be
 utilized in some experiments as alternatives to `transaction`.
 
 For details on the format, refer to the [readme.md](data/readme.md) file in the data directory.
@@ -43,21 +43,29 @@ For details on the format, refer to the [readme.md](data/readme.md) file in the 
 Changes
 ------------------
 
+### Oct 1, 2014
+
+* Fixed plotlines in legend
+* Added help text to legend to indicate you can toggle plots on and off
+* New dataset
+* Ruby 2.1.1
+* Minor bug fixes and whitespace cleanup
+
 ### Aug 15, 2013
 
 Implemented selectors allowing you to pick different dimensions in a
 single dataset.
 
-### Aug 9, 2013 
+### Aug 9, 2013
 
 Implemented alternative format for datasets paving the way for doing
 more with datasets that had more than one dimension.
 
-### July 8, 2013 
+### July 8, 2013
 
 Added quartile region shading in historgrams and timeseries charts
 
-### July 3, 2013 
+### July 3, 2013
 
 Incorporated [Ward Cuningham](http://c2.org)'s Traffic demo
 
