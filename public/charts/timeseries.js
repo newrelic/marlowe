@@ -347,7 +347,7 @@ function timeseries(div) {
             .on("drag", dragmove);
 
         function dragmove() {
-            var xPos = d3.event.x;
+            var xPos = d3.event.offsetX - $data.margin.left;
             var col = Math.min(Math.floor(xPos / cellWidth), $data.timeslices.length-1);
             if (col != $data.selectedTimeslice) {
                 $data.selectedTimeslice = col;

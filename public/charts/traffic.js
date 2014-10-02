@@ -162,7 +162,7 @@ function initTraffic(div) {
        stream.start = now - (t - stream.first);
        stream.sleep = 0;
        stream.index = 0;
-       var bisect = d3.bisector(function(d) { return d[0] + d[3]; }).right;
+       var bisect = d3.bisector(function(d) { return d[0] + d[2]; }).right;
        stream.index = bisect(stream.data, t);
     });
 }
